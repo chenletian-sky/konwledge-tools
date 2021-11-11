@@ -6,15 +6,18 @@ import Icon, { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons
 import { ColorResult, SketchPicker } from 'react-color';
 import { SettingIcon } from './Icon';
 import { connect } from 'react-redux';
-import { FontObject, MarkTextsDataType, MarkViewStoreType, StoreType } from '../types/propsTypes';
+import { FontObject, MarkTextsDataType, MarkViewStoreType, StoreType, TextsDataType } from '../types/propsTypes';
 import { updateMarkTextData, updateTextTablePage, updateTrainData } from '../action';
 import { updateTextsData } from '../action';
+import axios, { AxiosResponse } from 'axios';
+import { PATH } from '../types/actionTypes';
 
 
 
 
 interface MarkViewProps extends MarkViewStoreType {
 	history: any,
+	// MarkView:MarkViewStoreType,
 	updateTextTablePage: typeof updateTextTablePage,
 	updateMarkTextData: typeof updateMarkTextData,
 	updateTextsData: typeof updateTextsData,
@@ -436,9 +439,35 @@ class MarkView extends Component<MarkViewProps, MarkViewState>{
 					transform: 'translate(10px, -40px)'
 				}} onClick={
 					() => { 
+						console.log("selectRows",selectedRows)
+						// 更新训练集数据
 						updateTrainData(selectedRows)
+						const textsData:TextsDataType = selectedRows.map((object) => ({
+							key: object.key,
+							text: object.text,
+							label: object.label,
+							// textArr: []
+							textArr: object.textArr.map((obj) => ({
+								start: obj.start,
+								end: obj.end,
+								text: obj.text,
+								label: obj.label,
+								color: obj.color
+							}))
+						}))
+
+						axios.post(`${PATH}/upload_trainTexts`, textsData , {withCredentials: true})
+										.then((res:AxiosResponse<any>) => {
+											console.log("upload_trainTexts",res.data)
+										})
+						
+										// axios.delete(`${PATH}/delete_text`,)
+
 						// console.log(selectedRowKeys)
+						// 过滤被选中的数据 从标注数据中删除
 						updateMarkTextData(data.filter((value: { key?: string | undefined; text: string; label: { start: number; end: number; label: string; }[]; textArr: FontObject[]; }) => !selectedRowKeys.includes(value['key'] as string)))
+						
+						// console.log("data",data)
 						this.setState({ selectedRowKeys: [], selectedRows: [] })
 					}
 				}>加入训练集</Button>
@@ -456,13 +485,15 @@ class MarkView extends Component<MarkViewProps, MarkViewState>{
 	}
 
 	public componentDidMount() {
+		// console.log("markViewData",this.props.MarkView)
 		document.addEventListener('keydown', (e) => {
+			
 			if (e.ctrlKey) {
         e.preventDefault();
 				// console.log("ctrlKey",e.ctrlKey,e.key)
 				const { labels } = this.state
         const { data, updateMarkTextData, updateTextsData } = this.props
-				console.log(labels,data)
+				// console.log(labels,data)
 				for (let i = 0; i < labels.length; i++) {
 					if (labels[i]['key'] === e.key) {
 						for (let j = data.length - 1; j >=0; j--) {

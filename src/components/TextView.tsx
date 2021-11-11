@@ -100,7 +100,7 @@ class TextView extends Component<TextViewProps, TextViewState>{
                   okText: '确认',
                   cancelText: '取消',
                   onOk: () => {
-                    // console.log(record)
+                    // console.log("record",record['_id'],record['key'])
                     this.deleteText(record['_id'], record['key']);
                     updateTextsData(data.filter((value: any, i: number) => value['key'] !== record['key']))
 
@@ -232,7 +232,7 @@ class TextView extends Component<TextViewProps, TextViewState>{
   }
 
   private deleteText(_id: string, key: string) {
-    axios.delete(`${PATH}/delete_text?_id=${_id}&key=${key}`)
+    axios.delete(`${PATH}/delete_text?_id=${_id}&key=${key}`,{withCredentials:true})
       .then((res:AxiosResponse<any>) => {
         console.log(res.data)
       })

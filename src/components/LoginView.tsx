@@ -297,7 +297,7 @@ class LoginView extends Component<LoginViewProps, LoginViewState> {
     if ('' + this.verificationCode === this.state.verificationCode) {
       axios.post(`/register?email=${email}&pwd=${password}&name=${name}`, {withCredentials: true}).then((res: any) => {
         if (res.data.status === 200 && res.data.message === '注册成功') {
-          message.success('注册成，欢迎加入我们', 1);
+          message.success('注册成功，欢迎加入我们', 1);
           this.setState({ transform: 'translateZ(-100px) rotateX( 90deg)' })
         } else {
           message.error('该用户已存在', 1);

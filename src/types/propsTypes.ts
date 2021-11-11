@@ -7,7 +7,7 @@
   TextView: TextViewStoreType,
   MarkView: MarkViewStoreType,
   // Loading: LoadingStoreType,
-  // TrainView: MarkViewStoreType,
+  TrainView: MarkViewStoreType,
 }
 
 
@@ -69,6 +69,7 @@ export type TextsDataType = Array<{
 */
 export type MarkTextsDataType = Array<{
   key?: string,
+  _id?:string,
   text: string,
   label: Array<{
       start: number,

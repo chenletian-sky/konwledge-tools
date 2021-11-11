@@ -26,6 +26,7 @@ import axios, { AxiosResponse } from 'axios';
 // 后端路径
 import { PATH } from '../types/actionTypes';
 import { type } from 'os';
+import TrainView from './TrainView';
 
 // import { DictionaryIcon, TrainIcon } from './Icon'
 // import { MainStoreType, StoreType, TextsDataType } from '../types/propsTypes';
@@ -163,7 +164,7 @@ class Main extends Component<MainProps, MainState>{
             </Menu.Item>
             <Menu.Item key={'train'} icon={<Icon component={TrainIcon}/>} onClick={
               () => {
-                // history.push('/train')
+                history.push('/index/train')
               }
             }>
               训练数据
@@ -261,11 +262,12 @@ class Main extends Component<MainProps, MainState>{
                     }))
                   }))
                   updateTextsData(textsData)
-                  console.log("textData",typeof textsData)
+                  console.log("textData",textsData)
                   // axios.post(`/upload_texts`, textsData, {withCredentials: true})
+
                   axios.post(`${PATH}/upload_texts`, textsData, {withCredentials: true})
                       .then((res:AxiosResponse<any>) => {
-                        console.log(res.data)
+                        console.log(res)
                       })
                   // updateAllTextsData(textsData)
                   history.push('/index/texts')
@@ -329,7 +331,7 @@ class Main extends Component<MainProps, MainState>{
               <Route path='/index/dataVisualization' component={DataVisualView} />
               {/* <Route path='/index/' component={} /> */}
 
-              {/* <Route path='/train' component={TrainView} /> */}
+              <Route path='/index/train' component={TrainView} />
               
               {/* <Route path="/force-directed" component={ForceDirectedView} exact/> */}
             </Switch>

@@ -44,10 +44,10 @@ const initStore:StoreType = {
     // Loading: {
     //     isLoading: false
     // },
-    // TrainView: {
-    //     data: [],
-    //     current: 1
-    // }
+    TrainView: {
+        data: [],
+        current: 1
+    }
 }
 
 const MainReducer = (state: MainStoreType = initStore.Main, action: any) => {
@@ -180,19 +180,19 @@ const MarkViewReducer = (state: MarkViewStoreType = initStore.MarkView, action: 
 //     return state
 // }
 
-// const TrainViewReducer = (state: MarkViewStoreType = initStore.TrainView, action: any) => {
-//     if (action.type === UPDATE_TRAIN_DATA) {
-//         const { data: dataByAdd } = action
-//         const { data } = state
-//         data.splice(data.length, 0, ...dataByAdd)
-//         return {
-//             ...state,
-//             data
-//         }
-//     }
+const TrainViewReducer = (state: MarkViewStoreType = initStore.TrainView, action: any) => {
+    if (action.type === UPDATE_TRAIN_DATA) {
+        const { data } = action
+        // const { data } = state
+        // data.splice(data.length, 0, ...dataByAdd)
+        return {
+            ...state,
+            data
+        }
+    }
     
-//     return state
-// }
+    return state
+}
 
 const combineReducer = combineReducers({
     Main: MainReducer,
@@ -200,7 +200,7 @@ const combineReducer = combineReducers({
     TextView: TextViewReducer,
     MarkView: MarkViewReducer,
     // Loading: LoadingReducer,
-    // TrainView: TrainViewReducer,
+    TrainView: TrainViewReducer,
 })
 
 const Reducer = (state:StoreType, action:any) => {
