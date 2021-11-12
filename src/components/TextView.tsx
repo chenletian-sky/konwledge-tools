@@ -7,7 +7,7 @@ import { saveAs } from 'file-saver';
 
 import { AddIcon, CircleIcon, LabelIcon, SaveIcon, UpdateIcon } from './Icon';
 import { connect } from 'react-redux';
-import { FontObject, StoreType, TextViewStoreType } from '../types/propsTypes';
+import { FontObject, InitMarkText, StoreType, TextViewStoreType } from '../types/propsTypes';
 import { updateIsSave, updateMarkTextData, updateTextsData, updateTextTablePage } from '../action';
 import axios, { AxiosResponse } from 'axios';
 import { PATH } from '../types/actionTypes';
@@ -221,6 +221,89 @@ class TextView extends Component<TextViewProps, TextViewState>{
                 left: 315
             }}>
               标注
+            </Button>
+            <Button  type='primary' 
+              icon={<Icon component={LabelIcon} />}
+              onClick={
+                () => {
+                  // updateIsSave(false)
+                  // updateMarkTextData(data.map((value: { key?: string | undefined; text: string; label: { start: number; end: number; label: string; }[]; textArr?: Array<FontObject>}) => ({
+                  //   ...value,
+                  //   textArr: value['textArr'] || value['text'].split('').map((value: string, index: number) => ({
+                  //     text: value,
+                  //     start: index,
+                  //     end: index,
+                  //     label: 'none',
+                  //     color: ''
+                  //   }))
+                  // })))
+                  // history.push('/index/mark')
+                  const {data:originalData} = this.props
+                  
+                  axios.post(`${PATH}/api/initTextsWithDic`,{withCredentials:true}).then((res:any)=>{
+                    if(res.data.status === 400){
+                      message.error('初始化失败',1)
+                    }else if(res.data.status == 200){
+                      message.success('初始化成功',1)
+                      
+                      axios.get(`${PATH}/get_xferStation` )
+                              .then((res: AxiosResponse<any>) => {
+                                const { data: response } = res;
+                                if (response['status'] === 200 && response['message'] === '获取成功') {
+                                  console.log("before",response.data)
+                                  
+                                  const fileData = response.data
+                                  
+                                  const after =  fileData.map((value:InitMarkText, i: string)=>{
+                                    let returnValue = {
+                                        text: value['text'],
+                                        key: Number(Math.random().toString().substr(3, 10) + Date.now()).toString(36),
+                                        textArr: value['text'].split('').map((v: any, index: any) => ({
+                                            text: v,
+                                            start: index,
+                                            end: index,
+                                            label: 'none',
+                                            color: '',
+                                        }))
+                                    }
+                                    for(let i = value['labels'].length - 1; i >= 0; i--) {
+                                        const { start, end, label } = value['labels'][i]
+                                        // console.log("each",start,end,label)
+                                        returnValue['textArr'].splice(start, end - start)
+                                        returnValue['textArr'].splice(start, 0, {
+                                            text: value['text'].slice(start, end),
+                                            start,
+                                            end: end - 1,
+                                            label,
+                                            color:'yellow'
+                                        })
+                                    }
+
+                                    return returnValue
+                                  })
+                                  
+                                  console.log(after)
+                                  
+                                  
+                                  updateTextsData(after)
+                                  updateMarkTextData(after)
+                                  
+                                } else {
+                                  message.error('请您先登录', 1.5, () => {
+                                    this.props.history.push('/')
+                                  })
+                                }
+                              })
+                    }
+                  })
+                  
+                }
+              } style={{
+                position: 'absolute',
+                top: 10,
+                left: 400
+            }}>
+              初始化
             </Button>
         </React.Fragment>
       </div>

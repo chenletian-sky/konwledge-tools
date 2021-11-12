@@ -102,10 +102,14 @@ class MarkView extends Component<MarkViewProps, MarkViewState>{
 								let start = Math.min(this.startIndex, this.endIndex)
 								let end = Math.max(this.startIndex, this.endIndex)
 								if (text.slice(start, end + 1).map((font: FontObject) => font['text']).join('').includes(getSelection()?.toString() as string) && getSelection()?.toString()) {
+									
 									const textBySelect: string = getSelection()?.toString() as string;
+									
 									start = start + text.slice(start, end + 1).map((font: FontObject) => font['text']).join('').indexOf(textBySelect);
 									end = start + textBySelect.length - 1;
+									
 									let startIndex = data[current * 10 - 10 + index]['textArr'][start]['start']
+
 									data[current * 10 - 10 + index]['textArr'].splice(start, end + 1 - start)
 									data[current * 10 - 10 + index]['textArr'].splice(start, 0, {
 										text: textBySelect,

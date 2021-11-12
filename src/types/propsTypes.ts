@@ -90,3 +90,17 @@ export interface FontObject {
   color: string,
   _id?: string
 }
+
+/**
+ * 语料数据和字典数据结合后的打标数据
+ */
+export interface InitMarkText {
+  change:number,
+  labels:Array<{
+    start: number,
+    end: number,
+    label:string
+    _id?: string
+  }>,
+  text:string
+}

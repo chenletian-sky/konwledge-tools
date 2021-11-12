@@ -1,5 +1,5 @@
 import React, { Component, Key } from 'react';
-import { Input, Modal, Table, Tag, Popover, Button } from 'antd';
+import { Input, Modal, Table, Tag, Popover, Button, message } from 'antd';
 import 'antd/dist/antd.css';
 import Icon, { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 // import $ from 'jquery'
@@ -470,6 +470,22 @@ class TrainView extends Component <TrainViewProps, TrainViewState>{
                 
               }
             }>删除</Button>
+            <Button type='primary' style={{
+              // float: 'left'
+              transform: 'translate(20px, -40px)'
+            }} onClick={
+              () => { 
+                console.log("selectRow",selectedRows,data,selectedRowKeys)
+
+                axios.post(`${PATH}/api/jiaguTrain`,{withCredentials:true}).then((res:any)=>{
+                  if(res.data.status === 400){
+                    message.error("调用失败")
+                  }else{
+                    
+                    message.success("调用成功")
+                  }
+                })
+            }}>训练数据</Button>
             {/* <Button /> */}
           </div>
         )
