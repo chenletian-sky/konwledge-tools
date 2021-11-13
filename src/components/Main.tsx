@@ -305,6 +305,8 @@ class Main extends Component<MainProps, MainState>{
                 // setLoadingState(true)
                 // identifyEntity()
                 // ipcRenderer.send(OPEN_MODEL_CONFIG_WINDOW)
+
+                
               }
             }>
               实体标注

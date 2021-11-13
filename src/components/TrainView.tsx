@@ -475,7 +475,7 @@ class TrainView extends Component <TrainViewProps, TrainViewState>{
               transform: 'translate(20px, -40px)'
             }} onClick={
               () => { 
-                console.log("selectRow",selectedRows,data,selectedRowKeys)
+                // console.log("selectRow",selectedRows,data,selectedRowKeys)
 
                 axios.post(`${PATH}/api/jiaguTrain`,{withCredentials:true}).then((res:any)=>{
                   if(res.data.status === 400){

@@ -446,19 +446,48 @@ class MarkView extends Component<MarkViewProps, MarkViewState>{
 						console.log("selectRows",selectedRows)
 						// 更新训练集数据
 						updateTrainData(selectedRows)
-						const textsData:TextsDataType = selectedRows.map((object) => ({
-							key: object.key,
-							text: object.text,
-							label: object.label,
-							// textArr: []
-							textArr: object.textArr.map((obj) => ({
-								start: obj.start,
-								end: obj.end,
-								text: obj.text,
-								label: obj.label,
-								color: obj.color
-							}))
-						}))
+						
+
+						const textsData:TextsDataType = selectedRows.map((object) => {
+								let returnValue = {
+								key: object.key,
+								text: object.text,
+								label: object.label,
+								// textArr: []
+								textArr: object.textArr.map((obj) => ({
+									start: obj.start,
+									end: obj.end,
+									text: obj.text,
+									label: obj.label,
+									color: obj.color
+								}))
+							}
+
+							let labelValue = object.textArr.map((obj,index)=>{
+								let return_data = {
+									start:obj.start,
+									end: obj.end,
+									label: obj.label
+								}
+								if(obj.label !== 'none')
+									return return_data
+								else 
+									return {label:"none"}
+							})
+							labelValue =  labelValue.filter((obj)=>{
+								return obj.label !== "none"
+							})
+							returnValue.label = labelValue as Array<{
+									start: number;
+									end: number;
+									label: string;
+							}>
+							// console.log("each",labelValue)
+							return returnValue
+						}
+						)
+						
+						console.log("textData",textsData)
 
 						axios.post(`${PATH}/upload_trainTexts`, textsData , {withCredentials: true})
 										.then((res:AxiosResponse<any>) => {
