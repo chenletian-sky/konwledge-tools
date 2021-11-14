@@ -10,14 +10,18 @@ import {
     SET_LOADING_STATE,
     IDENTIFY_ENTITY,
     UPDATE_TRAIN_DATA,
-    UPDATE_ALL_TEXTS_DATA
+    UPDATE_ALL_TEXTS_DATA,
+    UPDATE_TRAINTEXT_TABLE_PAGE,
+    DELETE_TRAIN_DATA,
+    CHANGE_MENU_SELECTION
 } from '../types/actionTypes'
 import { 
   DictionaryViewStoreType,
   MainStoreType,
-  MarkViewStoreType, 
+  MarkViewStoreType,
+  MenuStoreType,
   StoreType, 
-  TextViewStoreType
+  TextViewStoreType,
 } from '../types/propsTypes'
 
 
@@ -47,6 +51,9 @@ const initStore:StoreType = {
     TrainView: {
         data: [],
         current: 1
+    },
+    MenuView:{
+        MenuSelectKey:['mark']
     }
 }
 
@@ -182,15 +189,40 @@ const MarkViewReducer = (state: MarkViewStoreType = initStore.MarkView, action: 
 
 const TrainViewReducer = (state: MarkViewStoreType = initStore.TrainView, action: any) => {
     if (action.type === UPDATE_TRAIN_DATA) {
-        const { data } = action
-        // const { data } = state
-        // data.splice(data.length, 0, ...dataByAdd)
+        const { data:dataByAdd } = action
+        const { data } = state
+        data.splice(data.length, 0, ...dataByAdd)
         return {
             ...state,
             data
         }
+    }else if(action.type === UPDATE_TRAINTEXT_TABLE_PAGE){
+        const { current } = action
+        // console.log("currentTrainPage",current)
+        return {
+            ...state,
+            current
+        }
+    }else if(action.type === DELETE_TRAIN_DATA){
+        const {data} = action
+        return{
+            ...state,
+            data
+        }
     }
-    
+    return state
+}
+
+const MenuReducer = (state: MenuStoreType = initStore.MenuView, action: any) => {
+    if(action.type === CHANGE_MENU_SELECTION){
+        const {specifyOptions} = action
+        let afterState = {
+            ...state,
+            MenuSelectKey:specifyOptions
+        }
+        console.log('afterState',afterState)
+        return afterState
+    }
     return state
 }
 
@@ -201,6 +233,7 @@ const combineReducer = combineReducers({
     MarkView: MarkViewReducer,
     // Loading: LoadingReducer,
     TrainView: TrainViewReducer,
+    MenuView:MenuReducer
 })
 
 const Reducer = (state:StoreType, action:any) => {

@@ -43,11 +43,21 @@ export const PATH = 'http://localhost:8080'
   * 更新语料表格的页码
   */
  export const UPDATE_TEXT_TABLE_PAGE = 'UPDATE_TEXT_TABLE_PAGE'
+
+ /**
+  * 更新训练数据表格的页码
+  */
+ export const UPDATE_TRAINTEXT_TABLE_PAGE = 'UPDATE_TRAINTEXT_TABLE_PAGE'
  
  /**
   * 更新训练集数据
   */
  export const UPDATE_TRAIN_DATA = 'UPDATE_TRAIN_DATA'
+
+/**
+ * 删除训练集数据
+ */
+export const DELETE_TRAIN_DATA = 'DELETE_TRAIN_DATA'
  
  /**
   * 更新标注的文本数据
@@ -64,4 +74,7 @@ export const PATH = 'http://localhost:8080'
   */
  export const IDENTIFY_ENTITY = 'IDENTIFY_ENTITY'
  
- 
+/***
+ * 更新菜单选项
+ */
+export const CHANGE_MENU_SELECTION = 'CHANGE_MENU_SELECTION'

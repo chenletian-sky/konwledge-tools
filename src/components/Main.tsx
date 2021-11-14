@@ -9,11 +9,11 @@ import 'antd/dist/antd.css';
 import { UploadOutlined, PlayCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import Icon, { UserOutlined } from '@ant-design/icons';
 // 自定义icon
-import { DictionaryIcon, TrainIcon,DataVisualIcon } from './Icon';
+import { DictionaryIcon, TrainIcon,DataVisualIcon, LabelIcon, MenuLabelIcon } from './Icon';
 // redux
 import { connect } from 'react-redux';
-import { MainStoreType, StoreType, TableDataType, TextsDataType } from '../types/propsTypes';
-import { identifyEntity, setLoadingState, updateAllDictionaryData, updateAllTextsData, updateDictionaryData, updateLabelByShow, updateMarkTextData, updateTextsData } from '../action';
+import { MainStoreType, StoreType, TableDataType, TextsDataType ,MenuStoreType} from '../types/propsTypes';
+import { identifyEntity,changeMenuSelect, setLoadingState, updateAllDictionaryData, updateAllTextsData, updateDictionaryData, updateLabelByShow, updateMarkTextData, updateTextsData } from '../action';
 // 路由页面
 import DictionaryView from './DictionaryView';
 import TextView from './TextView';
@@ -43,8 +43,9 @@ import TrainView from './TrainView';
  */
 axios.defaults.withCredentials = true
 
-interface MainProps extends MainStoreType {
+interface MainProps extends MainStoreType , MenuStoreType{
   history: any,
+  // MenuSelectKey:Array<string>,
   updateAllTextsData: typeof updateAllTextsData,
   updateAllDictionaryData: typeof updateAllDictionaryData,
 //   updateLabelByShow: typeof updateLabelByShow,
@@ -53,12 +54,14 @@ interface MainProps extends MainStoreType {
 //   setLoadingState: typeof setLoadingState,
 //   identifyEntity: typeof identifyEntity,
   updateMarkTextData: typeof updateMarkTextData,
+  changeMenuSelect: typeof changeMenuSelect
 }
 interface MainState {
   labelList: Array<string>,
   stringList: Array<string>,
   openKeys: Array<string>,
   selectedKeys: Array<string>,
+  // menuSelectKeys:Array<string>,
   repositories: Array<{
     name: string,
     repositoryId: string,
@@ -77,6 +80,7 @@ class Main extends Component<MainProps, MainState>{
 
       ],
       openKeys: ['directory'],
+      // menuSelectKeys:['texts'],
       selectedKeys: [],
       repositories: [{ name: '私有仓库', repositoryId: 'private' }],
     }
@@ -87,8 +91,10 @@ class Main extends Component<MainProps, MainState>{
     const { SubMenu } = Menu;
     const { Option } = Select;
     const { labelList, stringList, openKeys, selectedKeys, repositories } = this.state;
-    const { history, textsData, dictionaryData } = this.props;
-    const { updateAllTextsData, updateTextsData, updateAllDictionaryData, updateDictionaryData } = this.props;
+    const { history, textsData, dictionaryData ,MenuSelectKey} = this.props;
+    const { updateAllTextsData, changeMenuSelect,updateTextsData, updateAllDictionaryData, updateDictionaryData} = this.props;
+    
+    console.log("MainMenuSelectKeys",MenuSelectKey,dictionaryData)
     // console.log(dictionaryData)
     return (
       <Layout style={{
@@ -112,7 +118,16 @@ class Main extends Component<MainProps, MainState>{
           }>
             实体抽取工具
           </div>
-          <Menu theme="light" mode="inline" openKeys={openKeys} selectedKeys={selectedKeys}>
+          <Menu 
+            theme="light"
+            mode="inline"
+            openKeys={openKeys}
+
+            selectedKeys={MenuSelectKey} 
+            // selectedKeys={this.props.}
+
+            // defaultSelectedKeys={['texts']}
+          >
             <SubMenu key="dictionary" title="字典数据" icon={<Icon component={DictionaryIcon} />} onTitleClick={
               (e) => {
                 // console.log(e);
@@ -127,6 +142,7 @@ class Main extends Component<MainProps, MainState>{
                       updateDictionaryData(dictionaryData[value])
                       this.setState({ selectedKeys: [value] })
                       history.push('/index/dictionary')
+                      
                     }
                   }>
                     {value}
@@ -153,8 +169,9 @@ class Main extends Component<MainProps, MainState>{
                 ))
               }
             </SubMenu> */}
-            <Menu.Item icon={<FileTextOutlined />} onClick={
+            <Menu.Item key={'texts'} icon={<FileTextOutlined />} onClick={
               () => {
+                changeMenuSelect(['texts'])
                 history.push('/index/texts')
                 // updateTextsData(textsData[index])
                 // this.setState({ selectedKeys: ['text' + index] })
@@ -162,13 +179,27 @@ class Main extends Component<MainProps, MainState>{
             }>
               语料数据
             </Menu.Item>
+
+            <Menu.Item key={'mark'} icon={<Icon component={MenuLabelIcon}/>} onClick={
+              () => {
+                changeMenuSelect(['mark'])
+                history.push('/index/mark')
+              }
+            }>
+              标注数据
+            </Menu.Item>
+
             <Menu.Item key={'train'} icon={<Icon component={TrainIcon}/>} onClick={
               () => {
+                changeMenuSelect(['train'])
                 history.push('/index/train')
               }
             }>
               训练数据
             </Menu.Item>
+            
+            
+            
             <Menu.Item key="dataVisualization" icon={<DataVisualIcon/>} onClick={
               () => {
                 history.push('/index/dataVisualization')
@@ -271,6 +302,7 @@ class Main extends Component<MainProps, MainState>{
                       })
                   // updateAllTextsData(textsData)
                   history.push('/index/texts')
+                  changeMenuSelect(['texts'])
                   // stringList.push(name)
                   // this.setState({ stringList })
                   message.success('您已成功上传的语料数据', 1)
@@ -305,7 +337,14 @@ class Main extends Component<MainProps, MainState>{
                 // setLoadingState(true)
                 // identifyEntity()
                 // ipcRenderer.send(OPEN_MODEL_CONFIG_WINDOW)
-
+                axios.post(`${PATH}/api/jiaguTrain`,{withCredentials:true}).then((res:any)=>{
+                  if(res.data.status === 400){
+                    message.error("调用失败")
+                  }else{
+                    
+                    message.success("调用成功")
+                  }
+                })
                 
               }
             }>
@@ -392,11 +431,12 @@ class Main extends Component<MainProps, MainState>{
 
 
 const mapStateToProps = (state: StoreType, ownProps?: any) => {
-  const { Main } = state
+  const { Main,MenuView } = state
   // console.log()
   return {
     ...ownProps,
     ...Main,
+    ...MenuView
   }
 }
 
@@ -408,7 +448,8 @@ const mapDispatchToProps = {
   updateTextsData,
   setLoadingState,
   identifyEntity,
-  updateMarkTextData
+  updateMarkTextData,
+  changeMenuSelect
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);

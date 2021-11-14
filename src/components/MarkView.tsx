@@ -7,7 +7,7 @@ import { ColorResult, SketchPicker } from 'react-color';
 import { SettingIcon } from './Icon';
 import { connect } from 'react-redux';
 import { FontObject, MarkTextsDataType, MarkViewStoreType, StoreType, TextsDataType } from '../types/propsTypes';
-import { updateMarkTextData, updateTextTablePage, updateTrainData } from '../action';
+import { changeMenuSelect, updateMarkTextData, updateTextTablePage, updateTrainData } from '../action';
 import { updateTextsData } from '../action';
 import axios, { AxiosResponse } from 'axios';
 import { PATH } from '../types/actionTypes';
@@ -22,6 +22,7 @@ interface MarkViewProps extends MarkViewStoreType {
 	updateMarkTextData: typeof updateMarkTextData,
 	updateTextsData: typeof updateTextsData,
 	updateTrainData: typeof updateTrainData,
+	changeMenuSelect:typeof changeMenuSelect
 }
 interface MarkViewState {
 	editKey: string,
@@ -211,7 +212,7 @@ class MarkView extends Component<MarkViewProps, MarkViewState>{
 	public render(): JSX.Element {
 		// const dataStr = 
 		const { labels, inputVisible, labelSettingConfig, popoverVisibleName, selectedRowKeys, selectedRows } = this.state
-		const { history, current, data, updateTextTablePage, updateTextsData, updateTrainData, updateMarkTextData } = this.props
+		const { history, current, data, updateTextTablePage, updateTextsData, updateTrainData, updateMarkTextData,changeMenuSelect } = this.props
 		// if ()
 		// console.log(data[0]);
 		return (
@@ -488,7 +489,7 @@ class MarkView extends Component<MarkViewProps, MarkViewState>{
 						)
 						
 						console.log("textData",textsData)
-
+						
 						axios.post(`${PATH}/upload_trainTexts`, textsData , {withCredentials: true})
 										.then((res:AxiosResponse<any>) => {
 											console.log("upload_trainTexts",res.data)
@@ -496,10 +497,12 @@ class MarkView extends Component<MarkViewProps, MarkViewState>{
 						
 										// axios.delete(`${PATH}/delete_text`,)
 
-						// console.log(selectedRowKeys)
 						// 过滤被选中的数据 从标注数据中删除
-						updateMarkTextData(data.filter((value: { key?: string | undefined; text: string; label: { start: number; end: number; label: string; }[]; textArr: FontObject[]; }) => !selectedRowKeys.includes(value['key'] as string)))
+						// updateMarkTextData(data.filter((value: { key?: string | undefined; text: string; label: { start: number; end: number; label: string; }[]; textArr: FontObject[]; }) => !selectedRowKeys.includes(value['key'] as string)))
 						
+						// 将选中的数据复制一份加入训练集
+						updateMarkTextData(data)
+
 						// console.log("data",data)
 						this.setState({ selectedRowKeys: [], selectedRows: [] })
 					}
@@ -510,6 +513,7 @@ class MarkView extends Component<MarkViewProps, MarkViewState>{
 				}} onClick={
 					() => { 
 						history.push('/index/texts')
+						changeMenuSelect(['texts'])
 						// updateTextsData([...data])
 					}
 				}>返回</Button>
@@ -563,7 +567,8 @@ const mapDispatchToProps = {
   updateTextTablePage,
 	updateMarkTextData,
 	updateTextsData,
-	updateTrainData
+	updateTrainData,
+	changeMenuSelect
 }
 
 

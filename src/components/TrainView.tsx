@@ -6,22 +6,26 @@ import Icon, { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons
 import { ColorResult, SketchPicker } from 'react-color';
 import { SettingIcon } from './Icon';
 import { connect } from 'react-redux';
-import { FontObject, MarkTextsDataType, MarkViewStoreType, StoreType } from '../types/propsTypes';
-import { updateMarkTextData, updateTextTablePage, updateTrainData } from '../action';
+import { FontObject, InitMarkText, MarkTextsDataType, MarkViewStoreType, MenuStoreType, StoreType } from '../types/propsTypes';
+import { updateMarkTextData, updateTrainData, updateTrainTextTablePage ,updateTrainDataByDelete, changeMenuSelect} from '../action';
 import { updateTextsData } from '../action';
 import axios, { AxiosResponse } from 'axios';
 import { PATH } from '../types/actionTypes';
 
 
-interface TrainViewProps {
+interface TrainViewProps  {
   history: any,
   data:MarkTextsDataType,
   current:number,
 	TrainView:MarkViewStoreType,
-  updateTextTablePage: typeof updateTextTablePage,
+  MenuView:MenuStoreType
+  // updateTextTablePage: typeof updateTextTablePage,
 	updateMarkTextData: typeof updateMarkTextData,
 	updateTextsData: typeof updateTextsData,
 	updateTrainData: typeof updateTrainData,
+  updateTrainTextTablePage: typeof updateTrainTextTablePage,
+  updateTrainDataByDelete: typeof updateTrainDataByDelete,
+  changeMenuSelect : typeof changeMenuSelect
 }
 interface TrainViewState {
   editKey: string,
@@ -209,7 +213,7 @@ class TrainView extends Component <TrainViewProps, TrainViewState>{
 
     public render() : JSX.Element {
         const { labels, inputVisible, labelSettingConfig, popoverVisibleName, selectedRowKeys, selectedRows } = this.state
-        const { history, current, data, updateTextTablePage, updateTextsData, updateTrainData, updateMarkTextData } = this.props
+        const { history, current, data, updateTextsData, updateTrainData,updateTrainDataByDelete, updateMarkTextData,updateTrainTextTablePage ,changeMenuSelect} = this.props
         // if ()
         // console.log(data[0]);
         return (
@@ -426,7 +430,10 @@ class TrainView extends Component <TrainViewProps, TrainViewState>{
                 position: ['bottomRight'],
                 // showSizeChanger: true,
                 onChange: (page: number) => {
-                  updateTextTablePage(page)
+
+                  updateTrainTextTablePage(page)
+                  console.log("trainDataPage",page)
+                  // updateTextTablePage(page)
                   // this.setState({ pageSize: (pageSize as number) })
                 }
               }}
@@ -447,7 +454,7 @@ class TrainView extends Component <TrainViewProps, TrainViewState>{
                 console.log("selectRow",selectedRows,data,selectedRowKeys)
                 // console.log("afterFilter",data.filter((value)=>(!selectedRowKeys.includes(value['key'] as string))))
                 
-                updateTrainData(data.filter((value)=>(!selectedRowKeys.includes(value['key'] as string))))
+                updateTrainDataByDelete(data.filter((value)=>(!selectedRowKeys.includes(value['key'] as string))))
                 selectedRows.map((obj)=>{
                   // console.log(obj._id,obj.key)
                   
@@ -467,7 +474,6 @@ class TrainView extends Component <TrainViewProps, TrainViewState>{
                 // 过滤被选中的数据 从标注数据中删除
                 // updateMarkTextData(data.filter((value: { key?: string | undefined; text: string; label: { start: number; end: number; label: string; }[]; textArr: FontObject[]; }) => !selectedRowKeys.includes(value['key'] as string)))
                 // console.log("data",data)
-                
               }
             }>删除</Button>
             <Button type='primary' style={{
@@ -475,17 +481,104 @@ class TrainView extends Component <TrainViewProps, TrainViewState>{
               transform: 'translate(20px, -40px)'
             }} onClick={
               () => { 
-                // console.log("selectRow",selectedRows,data,selectedRowKeys)
+                // console.log("selectRow",data)
+                const {data:originalData} = this.props
+                  
+                  axios.post(`${PATH}/api/jiaguTrain`,{withCredentials:true}).then((res:any)=>{
+                    if(res.data.status === 400){
+                      message.error('初始化失败',1)
+                    }else if(res.data.status == 200){
+                      message.success('初始化成功',1)
+                      
+                      axios.get(`${PATH}/get_xferStation` )
+                              .then((res: AxiosResponse<any>) => {
+                                const { data: response } = res;
+                                if (response['status'] === 200 && response['message'] === '获取成功') {
+                                  
+                                  console.log("before",response.data)
+                                  
+                                  const fileData = response.data
+                                  
+                                  const after =  fileData.map((value:InitMarkText, i: string)=>{
+                                    let returnValue = {
+                                        text: value['text'],
+                                        key: Number(Math.random().toString().substr(3, 10) + Date.now()).toString(36),
+                                        textArr: value['text'].split('').map((v: any, index: any) => ({
+                                            text: v,
+                                            start: index,
+                                            end: index,
+                                            label: 'none',
+                                            color: '',
+                                        }))
+                                    }
+                                    for(let i = value['labels'].length - 1; i >= 0; i--) {
+                                        const { start, end, label } = value['labels'][i]
+                                        // console.log("each",start,end,label)
+                                        returnValue['textArr'].splice(start, end - start)
+                                        returnValue['textArr'].splice(start, 0, {
+                                            text: value['text'].slice(start, end),
+                                            start,
+                                            end: end - 1,
+                                            label,
+                                            color:'#d1c7b7'
+                                        })
+                                    }
 
-                axios.post(`${PATH}/api/jiaguTrain`,{withCredentials:true}).then((res:any)=>{
-                  if(res.data.status === 400){
-                    message.error("调用失败")
-                  }else{
-                    
-                    message.success("调用成功")
+                                    return returnValue
+                                  })
+                                  
+                                  console.log("afterData",after)
+                                  
+                                  
+
+                                  // updateTrainData(after)
+                                  updateMarkTextData(after)
+
+                                  axios.get(`${PATH}/delete_xferStation`,{withCredentials:true}).then((res:AxiosResponse<any>) =>{
+                                              if(res.data.status === 200){
+                                                // console.l
+                                                message.success("初始化中转站成功！")
+                                              }
+                                            })
+                                  
+                                  axios.post(`${PATH}/update_texts`,after,{withCredentials:true}).then((res:AxiosResponse<any>) => {
+                                    console.log(res.data)
+                                    if(res.data.status === 200){
+                                      message.success("语料数据更新成功！")
+                                      this.props.history.push('/index/mark')
+                                      changeMenuSelect(['mark'])
+                                    }else{
+                                      message.error("语料数据更新失败！")
+                                    }
+                                  })
+                                } else {
+                                  message.error('请您先登录', 1.5, () => {
+                                    this.props.history.push('/')
+                                  })
+                                }
+                              })
+                    }
+                  })
+
+                  
+                
+            }}>训练数据</Button>
+            <Button type='primary' style={{
+              // float: 'left'
+              transform: 'translate(30px, -40px)'
+            }} onClick={
+              () => { 
+
+
+                updateTrainDataByDelete([])
+
+                axios.delete(`${PATH}/delete_trainTexts_all`,{withCredentials:true}).then((res)=>{
+                  if(res.data.status === 200){
+                    message.success("训练数据清空成功！")
                   }
                 })
-            }}>训练数据</Button>
+              }
+            }>清空</Button>
             {/* <Button /> */}
           </div>
         )
@@ -495,19 +588,23 @@ class TrainView extends Component <TrainViewProps, TrainViewState>{
 
 
 const mapStateToProps = (state:StoreType, ownProps?: any) => {
-	const { TrainView } = state
+	const { TrainView , MenuView} = state
 	// console.log(Header)
 	return {
 			...ownProps,
 			...TrainView,
+      ...MenuView
 	}
 }
 
 const mapDispatchToProps = {
-  updateTextTablePage,
+  // updateTextTablePage,
 	updateMarkTextData,
 	updateTextsData,
-	updateTrainData
+	updateTrainData,
+  updateTrainTextTablePage,
+  updateTrainDataByDelete,
+  changeMenuSelect
 }
 
 

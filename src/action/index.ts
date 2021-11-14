@@ -6,11 +6,14 @@ import {
   MODIFY_LABEL_OF_DICTIONARY_DATA,
   UPDATE_IS_SAVE,
   UPDATE_TEXT_TABLE_PAGE,
+  UPDATE_TRAINTEXT_TABLE_PAGE,
   UPDATE_MARK_TEXT_DATA,
   SET_LOADING_STATE,
   IDENTIFY_ENTITY,
   UPDATE_TRAIN_DATA,
   UPDATE_ALL_TEXTS_DATA,
+  DELETE_TRAIN_DATA,
+  CHANGE_MENU_SELECTION
 } from '../types/actionTypes'
 import { MarkTextsDataType, TableDataType, TextsDataType } from '../types/propsTypes'
 
@@ -79,6 +82,14 @@ export const updateTextTablePage = (current: number) => ({
 })
 
 /**
+ * 更新训练数据表格的页码
+ */
+export const updateTrainTextTablePage = (current: number) => ({
+  type: UPDATE_TRAINTEXT_TABLE_PAGE,
+  current
+})
+
+/**
 * 更新标注的文本数据
 */
 export const updateMarkTextData = (data:MarkTextsDataType) => ({
@@ -91,6 +102,11 @@ export const updateMarkTextData = (data:MarkTextsDataType) => ({
 */
 export const updateTrainData = (data:MarkTextsDataType) => ({
   type: UPDATE_TRAIN_DATA,
+  data
+})
+
+export const updateTrainDataByDelete = (data:MarkTextsDataType) => ({
+  type:DELETE_TRAIN_DATA,
   data
 })
 
@@ -107,4 +123,12 @@ export const setLoadingState = (isLoading: boolean) => ({
 */
 export const identifyEntity = () => ({
   type: IDENTIFY_ENTITY
+})
+
+/**
+ * 
+ */
+export const changeMenuSelect = (specifyOptions:Array<string>) => ({
+  type:CHANGE_MENU_SELECTION,
+  specifyOptions
 })

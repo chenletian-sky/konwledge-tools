@@ -7,17 +7,18 @@ import { saveAs } from 'file-saver';
 
 import { AddIcon, CircleIcon, LabelIcon, SaveIcon, UpdateIcon } from './Icon';
 import { connect } from 'react-redux';
-import { FontObject, InitMarkText, StoreType, TextViewStoreType } from '../types/propsTypes';
-import { updateIsSave, updateMarkTextData, updateTextsData, updateTextTablePage } from '../action';
+import { FontObject, InitMarkText, MenuStoreType, StoreType, TextViewStoreType } from '../types/propsTypes';
+import { changeMenuSelect, updateIsSave, updateMarkTextData, updateTextsData, updateTextTablePage } from '../action';
 import axios, { AxiosResponse } from 'axios';
 import { PATH } from '../types/actionTypes';
 
-interface TextViewProps extends TextViewStoreType {
+interface TextViewProps extends TextViewStoreType , MenuStoreType{
   history: any,
   updateTextsData: typeof updateTextsData,
   updateIsSave: typeof updateIsSave,
   updateTextTablePage: typeof updateTextTablePage,
   updateMarkTextData: typeof updateMarkTextData,
+  changeMenuSelect :typeof changeMenuSelect
 }
 interface TextViewState {
   editKey: string,
@@ -123,7 +124,7 @@ class TextView extends Component<TextViewProps, TextViewState>{
 
   public render(): JSX.Element {
     const { pageSize } = this.state
-    const { data, isSave, current, history, updateTextsData, updateTextTablePage, updateMarkTextData } = this.props
+    const { data, isSave, current, history, updateTextsData,changeMenuSelect, updateTextTablePage, updateMarkTextData } = this.props
     // data.forEach((value: { key?: string; text: string; label: any; }, index: number,) => {
     //   value['key'] = '' + index
     // })
@@ -198,7 +199,7 @@ class TextView extends Component<TextViewProps, TextViewState>{
           }}>
             增加文本
           </Button>
-          <Button  type='primary' 
+          {/* <Button  type='primary' 
               icon={<Icon component={LabelIcon} />}
               onClick={
                 () => {
@@ -221,7 +222,7 @@ class TextView extends Component<TextViewProps, TextViewState>{
                 left: 315
             }}>
               标注
-            </Button>
+            </Button> */}
             <Button  type='primary' 
               icon={<Icon component={LabelIcon} />}
               onClick={
@@ -275,7 +276,7 @@ class TextView extends Component<TextViewProps, TextViewState>{
                                             start,
                                             end: end - 1,
                                             label,
-                                            color:'yellow'
+                                            color:'#d1c7b7'
                                         })
                                     }
 
@@ -287,6 +288,25 @@ class TextView extends Component<TextViewProps, TextViewState>{
                                   
                                   updateTextsData(after)
                                   updateMarkTextData(after)
+
+                                  axios.get(`${PATH}/delete_xferStation`,{withCredentials:true}).then((res:AxiosResponse<any>) =>{
+                                    if(res.data.status === 200){
+                                      // console.l
+                                      message.success("初始化中转站成功！")
+                                    }
+                                  })
+
+                                  axios.post(`${PATH}/update_texts`,after,{withCredentials:true}).then((res:AxiosResponse<any>) => {
+                                    console.log(res.data)
+                                    if(res.data.status === 200){
+                                      message.success("语料更新成功！")
+
+                                      this.props.history.push('/index/mark')
+                                      changeMenuSelect(['mark'])
+                                    }else{
+                                      message.error("语料更新失败！")
+                                    }
+                                  })
                                   
                                 } else {
                                   message.error('请您先登录', 1.5, () => {
@@ -301,7 +321,7 @@ class TextView extends Component<TextViewProps, TextViewState>{
               } style={{
                 position: 'absolute',
                 top: 10,
-                left: 400
+                left: 315
             }}>
               初始化
             </Button>
@@ -325,10 +345,12 @@ class TextView extends Component<TextViewProps, TextViewState>{
 
 const mapStateToProps = (state: StoreType, ownProps?: any) => {
   const { TextView } = state
+  const {MenuView} = state
   // console.log(Header)
   return {
     ...ownProps,
     ...TextView,
+    ...MenuView
   }
 }
 
@@ -336,7 +358,8 @@ const mapDispatchToProps = {
   updateTextsData,
   updateIsSave,
   updateTextTablePage,
-  updateMarkTextData
+  updateMarkTextData,
+  changeMenuSelect
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(TextView);

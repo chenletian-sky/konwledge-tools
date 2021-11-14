@@ -8,7 +8,9 @@
   MarkView: MarkViewStoreType,
   // Loading: LoadingStoreType,
   TrainView: MarkViewStoreType,
+  MenuView:MenuStoreType,
 }
+
 
 
 export interface MainStoreType {
@@ -103,4 +105,12 @@ export interface InitMarkText {
     _id?: string
   }>,
   text:string
+}
+
+/**
+ * 菜单数据
+ */
+export interface MenuStoreType{
+  MenuSelectKey:Array<string>
+  // MenuSelectKey:any
 }
