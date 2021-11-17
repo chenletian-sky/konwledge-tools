@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import 'antd/dist/antd.css';
-import { Button, Modal, Table, Input, message } from 'antd';
-import { ExclamationCircleOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Button, Modal, Table, Input, message, Space, TableColumnsType } from 'antd';
+import { ExclamationCircleOutlined, DeleteOutlined ,SearchOutlined} from '@ant-design/icons';
 import Icon from '@ant-design/icons';
 import { saveAs } from 'file-saver';
 
@@ -11,6 +11,7 @@ import { FontObject, InitMarkText, MenuStoreType, StoreType, TextViewStoreType }
 import { changeMenuSelect, updateIsSave, updateMarkTextData, updateTextsData, updateTextTablePage } from '../action';
 import axios, { AxiosResponse } from 'axios';
 import { PATH } from '../types/actionTypes';
+import Highlighter from 'react-highlight-words';
 
 interface TextViewProps extends TextViewStoreType , MenuStoreType{
   history: any,
@@ -23,6 +24,8 @@ interface TextViewProps extends TextViewStoreType , MenuStoreType{
 interface TextViewState {
   editKey: string,
   pageSize: number,
+  searchedColumn:string,
+  searchText:string
 }
 
 
@@ -32,9 +35,36 @@ class TextView extends Component<TextViewProps, TextViewState>{
     super(props)
     this.state = {
       editKey: '',
-      pageSize: 14
+      pageSize: 14,
+      searchText:'',
+      searchedColumn:''
     }
-    this.columns = [
+    
+  }
+
+  handleSearch = (selectedKeys:any, confirm:any, dataIndex:any) => {
+    confirm();    
+    // console.log("handleSearch",selectedKeys)
+    this.setState({
+      searchText: selectedKeys[0],
+      searchedColumn: dataIndex,
+    });
+  };
+
+  handleReset = (clearFilters:any) => {
+    clearFilters();
+    this.setState({ searchText: '' });
+  };
+
+  public render(): JSX.Element {
+    const { pageSize } = this.state
+    const { data, isSave, current, history, updateTextsData,changeMenuSelect, updateTextTablePage, updateMarkTextData } = this.props
+    const _this = this
+    // data.forEach((value: { key?: string; text: string; label: any; }, index: number,) => {
+    //   value['key'] = '' + index
+    // })
+    // console.log(data);
+    const columns = [
       {
         title: <div style={{
           width: '100%',
@@ -47,13 +77,75 @@ class TextView extends Component<TextViewProps, TextViewState>{
         width: '82%',
         // ellipsis: true,
         align: 'left',
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters,dataIndex}: any ) => {
+            // console.log("typeof",typeof setSelectedKeys,typeof selectedKeys,typeof confirm,typeof clearFilters)
+            // console.log("typeof", setSelectedKeys, selectedKeys, confirm, clearFilters)
+            
+            return (<div style={{ padding: 8 }}>
+              <Input
+                // ref={node => {
+                //   this.searchInput = node;
+                // }}
+                placeholder={`请输入关键字`}
+                value={selectedKeys[0]}
+                onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+                style={{ marginBottom: 8, display: 'block' }}
+              />
+              <Space>
+                <Button
+                  type="primary"
+                  onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+                  icon={<SearchOutlined />}
+                  size="small"
+                  style={{ width: 90 }}
+                >
+                  搜索
+                </Button>
+                <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+                  重置
+                </Button>
+                <Button
+                  type="link"
+                  size="small"
+                  onClick={() => {
+                    // console.log("filterClick",selectedKeys)
+                    confirm({ closeDropdown: false });
+                    this.setState({
+                      searchText: selectedKeys[0],
+                      searchedColumn: dataIndex,
+                    });
+                  }}
+                >
+                  过滤
+                </Button>
+              </Space>
+            </div>)
+            
+        },
+        filterIcon: (filtered:any) => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+        onFilter: (value: string, record: { [x: string]: { toString: () => string; }; }) =>
+          record["text"]
+            ? record["text"].toString().toLowerCase().includes(value.toLowerCase())
+            : '',
+        // onFilterDropdownVisibleChange: visible => {
+        //   if (visible) {
+        //     setTimeout(() => this.searchInput.select(), 10000);
+        //   }
+        // },
         render: (text: string, record: { key?: string, text: string, label: any }, index: number) => {
           const { TextArea } = Input
           const { editKey } = this.state
-          return editKey !== record['key'] ?
-            <div>
-              {text}
-            </div> :
+          return (editKey !== record['key'] ?
+            
+            (
+                <Highlighter
+                  highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+                  searchWords={[this.state.searchText]}
+                  autoEscape
+                  textToHighlight={text ? text.toString() : ''}
+                />
+              )  :
             <TextArea
               value={text}
               onChange={
@@ -72,7 +164,7 @@ class TextView extends Component<TextViewProps, TextViewState>{
                 }
               }
               autoSize
-            />
+            />)
         }
       }, {
         title: '操作',
@@ -120,15 +212,6 @@ class TextView extends Component<TextViewProps, TextViewState>{
         align: 'center'
       }
     ]
-  }
-
-  public render(): JSX.Element {
-    const { pageSize } = this.state
-    const { data, isSave, current, history, updateTextsData,changeMenuSelect, updateTextTablePage, updateMarkTextData } = this.props
-    // data.forEach((value: { key?: string; text: string; label: any; }, index: number,) => {
-    //   value['key'] = '' + index
-    // })
-    // console.log(data);
     return (
       <div style={{
         width: '100%',
@@ -319,7 +402,10 @@ class TextView extends Component<TextViewProps, TextViewState>{
               初始化
             </Button>
         </div>
-        <Table columns={this.columns} dataSource={data} size='small'
+        <Table 
+          columns={columns as TableColumnsType<any>}
+          dataSource={data} 
+          size='small'
           scroll={{ y: 580 }}
           pagination={{
             pageSize,

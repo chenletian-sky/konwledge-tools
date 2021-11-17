@@ -502,7 +502,7 @@ class Main extends Component<MainProps, MainState>{
                             }}
                           >
                             {
-                              100 - Math.round( (TrainViewData.data.length / MarkViewData.data.length)*100) < 1 ? "" : (
+                              Math.round( (TrainViewData.data.length / MarkViewData.data.length)*100) < 1 ? "" : (
                                 <>
                                 <span id="liters">已完成</span>
                                 <small 
@@ -510,7 +510,7 @@ class Main extends Component<MainProps, MainState>{
                                     fontWeight: "bold",
                                     fontSize: "30px",
                                   }}
-                                >{100 - Math.round( (TrainViewData.data.length / MarkViewData.data.length)*100)}</small>
+                                >{Math.round( (TrainViewData.data.length / MarkViewData.data.length)*100)}</small>
                                 </>
                               )
                             }
@@ -524,7 +524,7 @@ class Main extends Component<MainProps, MainState>{
                               justifyContent: "center",
                               // fontWeight: "bold",
                               // fontSize: "30px",
-                              width:`${Math.round( (TrainViewData.data.length / MarkViewData.data.length)*100)}%`,
+                              width:`${100 - Math.round( (TrainViewData.data.length / MarkViewData.data.length)*100)}%`,
                               // height: "0",
                               transition: "0.3s ease"
                             }}
@@ -544,7 +544,7 @@ class Main extends Component<MainProps, MainState>{
                               }}
                             >
                               {
-                                Math.round( (TrainViewData.data.length / MarkViewData.data.length)*100) < 1 ? "" : (
+                                Math.round( 100 - (TrainViewData.data.length / MarkViewData.data.length)*100) < 1 ? "" : (
                                   <>
                                     <span id="undone-percent"
                                         style={{
@@ -558,7 +558,7 @@ class Main extends Component<MainProps, MainState>{
                                           fontSize: "30px",
                                         }}
                                       >
-                                        {Math.round( (TrainViewData.data.length / MarkViewData.data.length)*100)}
+                                        {Math.round(100 -  (TrainViewData.data.length / MarkViewData.data.length)*100)}
                                       </small>
                                   </>
                                 )
