@@ -18,6 +18,7 @@ import { PATH } from '../types/actionTypes';
 interface MarkViewProps extends MarkViewStoreType {
 	history: any,
 	// MarkView:MarkViewStoreType,
+	TrainViewData:MarkViewStoreType,
 	updateTextTablePage: typeof updateTextTablePage,
 	updateMarkTextData: typeof updateMarkTextData,
 	updateTextsData: typeof updateTextsData,
@@ -213,6 +214,7 @@ class MarkView extends Component<MarkViewProps, MarkViewState>{
 		// const dataStr = 
 		const { labels, inputVisible, labelSettingConfig, popoverVisibleName, selectedRowKeys, selectedRows } = this.state
 		const { history, current, data, updateTextTablePage, updateTextsData, updateTrainData, updateMarkTextData,changeMenuSelect } = this.props
+		const {TrainViewData} = this.props
 		// if ()
 		// console.log(data[0]);
 		return (
@@ -444,12 +446,28 @@ class MarkView extends Component<MarkViewProps, MarkViewState>{
 					transform: 'translate(10px, -40px)'
 				}} onClick={
 					() => { 
-						console.log("selectRows",selectedRows)
+						console.log("before-selectRows",selectedRows)
+						console.log("trainData",TrainViewData)
+
+						let afterSelect = selectedRows.filter((selectObj)=>{
+							let flag = true
+							for(let i=0;i<TrainViewData.data.length;i++){
+								const currentData = TrainViewData.data[i]
+								if(currentData.key === selectObj.key){
+									flag = false
+								}
+							}
+							return flag
+						})
+
+						console.log('after-selectRows',afterSelect)
+
+
 						// 更新训练集数据
-						updateTrainData(selectedRows)
+						updateTrainData(afterSelect)
 						
 
-						const textsData:TextsDataType = selectedRows.map((object) => {
+						const textsData:TextsDataType = afterSelect.map((object) => {
 								let returnValue = {
 								key: object.key,
 								text: object.text,
@@ -488,11 +506,11 @@ class MarkView extends Component<MarkViewProps, MarkViewState>{
 						}
 						)
 						
-						console.log("textData",textsData)
+						// console.log("textData",textsData)
 						
 						axios.post(`${PATH}/upload_trainTexts`, textsData , {withCredentials: true})
 										.then((res:AxiosResponse<any>) => {
-											console.log("upload_trainTexts",res.data)
+											// console.log("upload_trainTexts",res.data)
 										})
 						
 										// axios.delete(`${PATH}/delete_text`,)
@@ -500,13 +518,16 @@ class MarkView extends Component<MarkViewProps, MarkViewState>{
 						// 过滤被选中的数据 从标注数据中删除
 						// updateMarkTextData(data.filter((value: { key?: string | undefined; text: string; label: { start: number; end: number; label: string; }[]; textArr: FontObject[]; }) => !selectedRowKeys.includes(value['key'] as string)))
 						
+
+
 						// 将选中的数据复制一份加入训练集
-						updateMarkTextData(data)
+						// updateMarkTextData(data)
 
 						// console.log("data",data)
-						this.setState({ selectedRowKeys: [], selectedRows: [] })
+						this.setState({ selectedRowKeys: [] , selectedRows: [] })
 					}
 				}>加入训练集</Button>
+				
 				<Button type='primary' style={{
 					// float: 'left'
 					transform: 'translate(20px, -40px)'
@@ -555,11 +576,12 @@ class MarkView extends Component<MarkViewProps, MarkViewState>{
 }
 
 const mapStateToProps = (state:StoreType, ownProps?: any) => {
-	const { MarkView } = state
+	const { MarkView ,TrainView} = state
 	// console.log(Header)
 	return {
 			...ownProps,
 			...MarkView,
+			TrainViewData:TrainView
 	}
 }
 

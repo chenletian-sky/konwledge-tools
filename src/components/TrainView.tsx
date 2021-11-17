@@ -432,7 +432,7 @@ class TrainView extends Component <TrainViewProps, TrainViewState>{
                 onChange: (page: number) => {
 
                   updateTrainTextTablePage(page)
-                  console.log("trainDataPage",page)
+                  // console.log("trainDataPage",page)
                   // updateTextTablePage(page)
                   // this.setState({ pageSize: (pageSize as number) })
                 }
@@ -451,7 +451,7 @@ class TrainView extends Component <TrainViewProps, TrainViewState>{
               transform: 'translate(10px, -40px)'
             }} onClick={
               () => { 
-                console.log("selectRow",selectedRows,data,selectedRowKeys)
+                // console.log("selectRow",selectedRows,data,selectedRowKeys)
                 // console.log("afterFilter",data.filter((value)=>(!selectedRowKeys.includes(value['key'] as string))))
                 
                 updateTrainDataByDelete(data.filter((value)=>(!selectedRowKeys.includes(value['key'] as string))))
@@ -495,7 +495,7 @@ class TrainView extends Component <TrainViewProps, TrainViewState>{
                                 const { data: response } = res;
                                 if (response['status'] === 200 && response['message'] === '获取成功') {
                                   
-                                  console.log("before",response.data)
+                                  // console.log("before",response.data)
                                   
                                   const fileData = response.data
                                   
@@ -527,7 +527,7 @@ class TrainView extends Component <TrainViewProps, TrainViewState>{
                                     return returnValue
                                   })
                                   
-                                  console.log("afterData",after)
+                                  // console.log("afterData",after)
                                   
                                   
 
@@ -542,7 +542,7 @@ class TrainView extends Component <TrainViewProps, TrainViewState>{
                                             })
                                   
                                   axios.post(`${PATH}/update_texts`,after,{withCredentials:true}).then((res:AxiosResponse<any>) => {
-                                    console.log(res.data)
+                                    // console.log(res.data)
                                     if(res.data.status === 200){
                                       message.success("语料数据更新成功！")
                                       this.props.history.push('/index/mark')

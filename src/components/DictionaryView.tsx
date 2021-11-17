@@ -347,7 +347,7 @@ class DictionaryView extends Component<
   private deleteDictionary (_id: string, key: string) {
     axios.delete(`${PATH}/delete_dictionary?_id=${_id}&key=${key}`)
       .then((res:AxiosResponse<any>) => {
-        console.log(res.data)
+        // console.log(res.data)
         message.success('删除成功', 1);
       })
   }

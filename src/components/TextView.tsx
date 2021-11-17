@@ -132,26 +132,19 @@ class TextView extends Component<TextViewProps, TextViewState>{
     return (
       <div style={{
         width: '100%',
-        height: '475px',
+        // height: '475px',
+        height:"100%",
         padding: '0px 2%',
         backgroundColor: '#fafafa',
         position: 'relative'
       }}>
-        <React.Fragment>
-          <Table columns={this.columns} dataSource={data} size='small'
-            scroll={{ y: 580 }}
-            pagination={{
-              pageSize,
-              current,
-              simple: true,
-              position: ['topRight'],
-              // showSizeChanger: true,
-              onChange: (page: number) => {
-                updateTextTablePage(page)
-                // this.setState({ pageSize: (pageSize as number) })
-              }
-            }}
-          />
+        <div style={{
+          width: '100%',
+          height: '0px',
+          padding: '0px',//rgb(255, 255, 255)
+          // backgroundColor: 'red'
+          // position: 'absolute'
+        }}>
           <Button type="primary" size='middle' icon={
             <Icon component={isSave ? SaveIcon : CircleIcon} />
           } style={{
@@ -170,7 +163,7 @@ class TextView extends Component<TextViewProps, TextViewState>{
           } style={{
             position: 'absolute',
             top: 10,
-            left: 110 + 3
+            left: 110
           }} onClick={
             () => {
               const textString:string = data.map(
@@ -251,7 +244,7 @@ class TextView extends Component<TextViewProps, TextViewState>{
                               .then((res: AxiosResponse<any>) => {
                                 const { data: response } = res;
                                 if (response['status'] === 200 && response['message'] === '获取成功') {
-                                  console.log("before",response.data)
+                                  // console.log("before",response.data)
                                   
                                   const fileData = response.data
                                   
@@ -283,7 +276,7 @@ class TextView extends Component<TextViewProps, TextViewState>{
                                     return returnValue
                                   })
                                   
-                                  console.log(after)
+                                  // console.log(after)
                                   
                                   
                                   updateTextsData(after)
@@ -297,7 +290,7 @@ class TextView extends Component<TextViewProps, TextViewState>{
                                   })
 
                                   axios.post(`${PATH}/update_texts`,after,{withCredentials:true}).then((res:AxiosResponse<any>) => {
-                                    console.log(res.data)
+                                    // console.log(res.data)
                                     if(res.data.status === 200){
                                       message.success("语料更新成功！")
 
@@ -321,11 +314,27 @@ class TextView extends Component<TextViewProps, TextViewState>{
               } style={{
                 position: 'absolute',
                 top: 10,
-                left: 315
+                left: 320
             }}>
               初始化
             </Button>
-        </React.Fragment>
+        </div>
+        <Table columns={this.columns} dataSource={data} size='small'
+          scroll={{ y: 580 }}
+          pagination={{
+            pageSize,
+            current,
+            simple: true,
+            position: ['topRight'],
+            // showSizeChanger: true,
+            onChange: (page: number) => {
+              updateTextTablePage(page)
+              // this.setState({ pageSize: (pageSize as number) })
+            }
+          }}
+        />
+          
+        
       </div>
     )
   }
@@ -337,7 +346,7 @@ class TextView extends Component<TextViewProps, TextViewState>{
   private deleteText(_id: string, key: string) {
     axios.delete(`${PATH}/delete_text?_id=${_id}&key=${key}`,{withCredentials:true})
       .then((res:AxiosResponse<any>) => {
-        console.log(res.data)
+        // console.log(res.data)
       })
   }
 

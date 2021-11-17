@@ -4,15 +4,15 @@ import {
   Switch,
 } from 'react-router-dom'
 // antd组件库
-import { Layout, Menu, Button, message, Avatar, Dropdown, Select } from 'antd';
+import { Layout, Menu, Button, message, Avatar, Dropdown, Select, Progress, Descriptions, Space } from 'antd';
 import 'antd/dist/antd.css';
 import { UploadOutlined, PlayCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import Icon, { UserOutlined } from '@ant-design/icons';
 // 自定义icon
-import { DictionaryIcon, TrainIcon,DataVisualIcon, LabelIcon, MenuLabelIcon } from './Icon';
+import { DictionaryIcon, TrainIcon,DataVisualIcon, LabelIcon, MenuLabelIcon, Logo } from './Icon';
 // redux
 import { connect } from 'react-redux';
-import { MainStoreType, StoreType, TableDataType, TextsDataType ,MenuStoreType} from '../types/propsTypes';
+import { MainStoreType, StoreType, TableDataType, TextsDataType ,MenuStoreType, TextViewStoreType, MarkViewStoreType} from '../types/propsTypes';
 import { identifyEntity,changeMenuSelect, setLoadingState, updateAllDictionaryData, updateAllTextsData, updateDictionaryData, updateLabelByShow, updateMarkTextData, updateTextsData } from '../action';
 // 路由页面
 import DictionaryView from './DictionaryView';
@@ -27,6 +27,9 @@ import axios, { AxiosResponse } from 'axios';
 import { PATH } from '../types/actionTypes';
 import { type } from 'os';
 import TrainView from './TrainView';
+import MyPieChart from './EchartComponents/MyPieChart';
+import BatteryCharge from './Animation/BatteryCharge';
+import MyProcess from './Animation/MyProcess';
 
 // import { DictionaryIcon, TrainIcon } from './Icon'
 // import { MainStoreType, StoreType, TextsDataType } from '../types/propsTypes';
@@ -43,8 +46,12 @@ import TrainView from './TrainView';
  */
 axios.defaults.withCredentials = true
 
-interface MainProps extends MainStoreType , MenuStoreType{
+interface MainProps extends MainStoreType , MenuStoreType,StoreType{
   history: any,
+  // MainStoreData:MainStoreType
+  TextViewData:TextViewStoreType,
+  MarkViewData:MarkViewStoreType,
+  TrainViewData:MarkViewStoreType,
   // MenuSelectKey:Array<string>,
   updateAllTextsData: typeof updateAllTextsData,
   updateAllDictionaryData: typeof updateAllDictionaryData,
@@ -66,7 +73,6 @@ interface MainState {
     name: string,
     repositoryId: string,
   }>
-
 }
 class Main extends Component<MainProps, MainState>{
   public constructor(props: MainProps) {
@@ -90,6 +96,7 @@ class Main extends Component<MainProps, MainState>{
     const { Header, Sider, Content } = Layout;
     const { SubMenu } = Menu;
     const { Option } = Select;
+    const {TextViewData,MarkViewData,TrainViewData} = this.props
     const { labelList, stringList, openKeys, selectedKeys, repositories } = this.state;
     const { history, textsData, dictionaryData ,MenuSelectKey} = this.props;
     const { updateAllTextsData, changeMenuSelect,updateTextsData, updateAllDictionaryData, updateDictionaryData} = this.props;
@@ -116,6 +123,10 @@ class Main extends Component<MainProps, MainState>{
               history.push('/')
             }
           }>
+            <Icon 
+            // style={{height:'20px',width:"20px"}} 
+            component={Logo}></Icon>
+            &nbsp;
             实体抽取工具
           </div>
           <Menu 
@@ -128,7 +139,9 @@ class Main extends Component<MainProps, MainState>{
 
             // defaultSelectedKeys={['texts']}
           >
-            <SubMenu key="dictionary" title="字典数据" icon={<Icon component={DictionaryIcon} />} onTitleClick={
+            <SubMenu 
+            style={{fontSize:'20px'}}
+              key="dictionary" title="字典数据" icon={<Icon component={DictionaryIcon} />} onTitleClick={
               (e) => {
                 // console.log(e);
                 this.setState({ openKeys: openKeys[0] === e.key ? [] : [e.key] })
@@ -169,7 +182,9 @@ class Main extends Component<MainProps, MainState>{
                 ))
               }
             </SubMenu> */}
-            <Menu.Item key={'texts'} icon={<FileTextOutlined />} onClick={
+            <Menu.Item 
+              style={{fontSize:'20px'}}
+              key={'texts'} icon={<FileTextOutlined />} onClick={
               () => {
                 changeMenuSelect(['texts'])
                 history.push('/index/texts')
@@ -180,7 +195,9 @@ class Main extends Component<MainProps, MainState>{
               语料数据
             </Menu.Item>
 
-            <Menu.Item key={'mark'} icon={<Icon component={MenuLabelIcon}/>} onClick={
+            <Menu.Item 
+              style={{fontSize:'20px'}}
+              key={'mark'} icon={<Icon component={MenuLabelIcon}/>} onClick={
               () => {
                 changeMenuSelect(['mark'])
                 history.push('/index/mark')
@@ -189,7 +206,9 @@ class Main extends Component<MainProps, MainState>{
               标注数据
             </Menu.Item>
 
-            <Menu.Item key={'train'} icon={<Icon component={TrainIcon}/>} onClick={
+            <Menu.Item 
+              style={{fontSize:'20px'}}
+              key={'train'} icon={<Icon component={TrainIcon}/>} onClick={
               () => {
                 changeMenuSelect(['train'])
                 history.push('/index/train')
@@ -200,7 +219,9 @@ class Main extends Component<MainProps, MainState>{
             
             
             
-            <Menu.Item key="dataVisualization" icon={<DataVisualIcon/>} onClick={
+            <Menu.Item 
+              style={{fontSize:'20px'}}
+              key="dataVisualization" icon={<DataVisualIcon/>} onClick={
               () => {
                 history.push('/index/dataVisualization')
                 // updateTextsData(textsData[index])
@@ -214,169 +235,384 @@ class Main extends Component<MainProps, MainState>{
         </Sider>
         <Layout className="site-layout"  style={{height:'100%'}}>
           <Header className="site-layout-background" style={{ padding: 0, backgroundColor: 'white' }}>
-            <input type="file"  id="dict-files" accept='application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
-              style={{ display: 'none' }} onChange={
-                (event: React.ChangeEvent<HTMLInputElement>) => {
-                  const fileByRead:FileList = event.currentTarget.files as FileList
-                  const reader = new FileReader(); 
-                  reader.readAsArrayBuffer(fileByRead[0]); //读取文件的内容
-                  reader.onload = () => {
-                    // console.log(reader.result)
-                    const { result } = reader;
-                    const wb = XLSX.read(result)
-                    /* Get first worksheet */
-                    const wsname = wb.SheetNames[0];
-                    const ws = wb.Sheets[wsname];
-                    /* Convert array of arrays */
-                    const data:Array<Array<string>> = XLSX.utils.sheet_to_json(ws, {header:1});
-                    // console.log(data)
-                    const dataByAdd:TableDataType = []
-                    for(let i = data.length - 1; i > 0; i--) {//;
-                      const d = {
-                        name: data[i][1],
-                        label: data[i][0],
-                        key: Number(Math.random().toString().substr(3, 10) + Date.now()).toString(36),
-                        abbreviations: [...data[i].slice(2)]
-                      }
-                      dataByAdd.push(d)
-                      if(labelList.includes(data[i][0])) {
-                        dictionaryData[data[i][0]].push(d)
-                      } else {
-                        labelList.push(data[i][0])
-                        dictionaryData[data[i][0]] = [d]
-                      }
-                    }
-                    axios.post(`${PATH}/upload_dictionary`, dataByAdd, {withCredentials: true})
-                      .then((res:AxiosResponse<any>) => {
-                        console.log(res.data)
-                      })
-                    history.push('/index/dictionary')
-                    message.success('您已成功上传的字典数据', 1)
-                    updateAllDictionaryData(JSON.parse(JSON.stringify(dictionaryData)))
-                    this.setState({ labelList })
-                  }
-                }
-              }
-            />
-            <Button icon={<UploadOutlined />} onClick={
-              () => {
-                $('input#dict-files').click()
-                this.setState({ openKeys: ['dictionary'] })
-              }
-            }>
-              上传字典
-            </Button>
-            <input type="file" id="text-files" placeholder='a.txt' accept='text/plain' style={{
-              display: 'none'
-            }} onChange={
-              (event: React.ChangeEvent<HTMLInputElement>) => {
-                const fileByRead:FileList = event.currentTarget.files as FileList
-                const name:string = fileByRead[0].name
-                const reader = new FileReader(); 
-                reader.readAsText(fileByRead[0]); //读取文件的内容
-                reader.onload = () => {
-                  // console.log(this.result)
-                  const { result } = reader;
-                  const data:Array<string> = (result as string).split('\r\n').filter((value: string) => value !== '')
-                  // console.log(data)
-                  const textsData:TextsDataType = data.map((value: string) => ({
-                    key: Number(Math.random().toString().substr(3, 10) + Date.now()).toString(36),
-                    text: value,
-                    label: [],
-                    // textArr: []
-                    textArr: value.split('').map((font:string, index:number) => ({
-                      start: index,
-                      end: index,
-                      text: font,
-                      label: 'none',
-                      color: 'blue'
-                    }))
-                  }))
-                  updateTextsData(textsData)
-                  console.log("textData",textsData)
-                  // axios.post(`/upload_texts`, textsData, {withCredentials: true})
+            <Menu mode="horizontal" style={{ fontSize: '1.5em', width: '100%', color: 'white', backgroundColor: 'rgb(22,21,204)' }}>
+              <Menu.Item key={'create'} 
+              // icon={<Icon component={CreateIcon}></Icon>}
+                onClick={
+                () => {
 
-                  axios.post(`${PATH}/upload_texts`, textsData, {withCredentials: true})
-                      .then((res:AxiosResponse<any>) => {
-                        console.log(res)
-                      })
-                  // updateAllTextsData(textsData)
-                  history.push('/index/texts')
-                  changeMenuSelect(['texts'])
-                  // stringList.push(name)
-                  // this.setState({ stringList })
-                  message.success('您已成功上传的语料数据', 1)
                 }
-              }
-            } />
-            <Button icon={<UploadOutlined />} onClick={
-              () => {
-                $('input#text-files').click()
-                // const path: string = ipcRenderer.sendSync(UPLOAD_TEXTS_DATA)
-                // if (path === '') {
-                //   message.success('您已取消上传', 1);
-                //   return;
-                // }
-                // stringList.push([path.split('\\')[path.split('\\').length - 1], path])
-                let index = stringList.length;
-                // for (let i = 0; i < stringList.length - 1; i++) {
-                //   if (stringList[i][0] === path.split('\\').pop() && stringList[i][1] === path) {
-                //     stringList.pop()
-                //     index = i
-                //     break;
-                //   }
-                // }
-                this.setState({ openKeys: ['text'], selectedKeys: ['text' + index] })
-                // this.readTxtFile(path)
-              }
-            }>
-              上传语料
-            </Button>
-            <Button icon={<PlayCircleOutlined />} onClick={
-              () => {
-                // setLoadingState(true)
-                // identifyEntity()
-                // ipcRenderer.send(OPEN_MODEL_CONFIG_WINDOW)
-                axios.post(`${PATH}/api/jiaguTrain`,{withCredentials:true}).then((res:any)=>{
-                  if(res.data.status === 400){
-                    message.error("调用失败")
-                  }else{
-                    
-                    message.success("调用成功")
-                  }
-                })
-                
-              }
-            }>
-              实体标注
-            </Button>
+              }>
+                创建仓库
+              </Menu.Item>
+              <SubMenu key="personalRes" 
+              // icon={<Icon component={PersonIcon}></Icon>}
+                title="个人仓库">
+                <Menu.Item>仓库1</Menu.Item>
+                <Menu.Item>仓库2</Menu.Item>
+              </SubMenu>
+            </Menu>
             <Avatar size='default' icon={<UserOutlined />} style={{
               float: 'right',
-              marginTop: '15px',
+              // marginTop: '15px',
+              // marginRight: '15px'
+              marginTop: '-47px',
               marginRight: '15px'
             }}/>
           </Header>
-          <Content className="site-layout-background"
-            style={{
-              height:'100%'
-              // margin: '24px 16px',
-              // padding: 24,
-              // minHeight: 600,
-            }}
-          >
-            {/* <Loading /> */}
-            <Switch>
-              <Route path="/index/dictionary" component={DictionaryView} />
-              <Route path="/index/texts" component={TextView}/>
-              <Route path='/index/mark' component={MarkView} />
-              <Route path='/index/dataVisualization' component={DataVisualView} />
-              {/* <Route path='/index/' component={} /> */}
+          <Layout style={{height:'100%',width:'100%'}}>
+            <Content className="site-layout-background"
+              style={{
+                height:'100%',
+                // width:'75%'
+                // margin: '24px 16px',
+                // padding: 24,
+                // minHeight: 600,
+              }}
+            >
 
-              <Route path='/index/train' component={TrainView} />
+              {/* <Loading /> */}
+            <div style={{ width: '75%', height: '96%', marginTop: '1%', marginLeft: '1%', background: 'white', float: 'left' }}>
+              <Menu mode="horizontal" style={{ fontSize: '1em', width: '100%', color: 'white', backgroundColor: 'rgb(120,166,234)' }}>
+              <div style={{ fontSize: '1.2em', paddingLeft: '1%' }}>知识图谱项目</div>
+                <div style={{ paddingLeft: "59%" }}>
+                  <input type="file"  id="dict-files" accept='application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+                    style={{ display: 'none' }} onChange={
+                      (event: React.ChangeEvent<HTMLInputElement>) => {
+                        const fileByRead:FileList = event.currentTarget.files as FileList
+                        const reader = new FileReader(); 
+                        reader.readAsArrayBuffer(fileByRead[0]); //读取文件的内容
+                        reader.onload = () => {
+                          // console.log(reader.result)
+                          const { result } = reader;
+                          const wb = XLSX.read(result)
+                          /* Get first worksheet */
+                          const wsname = wb.SheetNames[0];
+                          const ws = wb.Sheets[wsname];
+                          /* Convert array of arrays */
+                          const data:Array<Array<string>> = XLSX.utils.sheet_to_json(ws, {header:1});
+                          // console.log(data)
+                          const dataByAdd:TableDataType = []
+                          for(let i = data.length - 1; i > 0; i--) {//;
+                            const d = {
+                              name: data[i][1],
+                              label: data[i][0],
+                              key: Number(Math.random().toString().substr(3, 10) + Date.now()).toString(36),
+                              abbreviations: [...data[i].slice(2)]
+                            }
+                            
+                            dataByAdd.push(d)
+                            
+                            if(labelList.includes(data[i][0])) {
+                              dictionaryData[data[i][0]].push(d)
+                            } else {
+                              labelList.push(data[i][0])
+                              dictionaryData[data[i][0]] = [d]
+                            }
+                          }
+                          axios.post(`${PATH}/upload_dictionary`, dataByAdd, {withCredentials: true})
+                            .then((res:AxiosResponse<any>) => {
+                              // console.log(res.data)
+                            })
+                          history.push('/index/dictionary')
+                          message.success('您已成功上传的字典数据', 1)
+                          updateAllDictionaryData(JSON.parse(JSON.stringify(dictionaryData)))
+                          this.setState({ labelList })
+                        }
+                      }
+                    }
+                  />
+                  <Button icon={<UploadOutlined />} onClick={
+                    () => {
+                      $('input#dict-files').click()
+                      this.setState({ openKeys: ['dictionary'] })
+                    }
+                  }>
+                    上传字典
+                  </Button>
+                  <input type="file" id="text-files" placeholder='a.txt' accept='text/plain' style={{
+                    display: 'none'
+                  }} onChange={
+                    (event: React.ChangeEvent<HTMLInputElement>) => {
+                      const fileByRead:FileList = event.currentTarget.files as FileList
+                      const name:string = fileByRead[0].name
+                      const reader = new FileReader(); 
+                      reader.readAsText(fileByRead[0]); //读取文件的内容
+                      reader.onload = () => {
+                        // console.log(this.result)
+                        const { result } = reader;
+                        const data:Array<string> = (result as string).split('\r\n').filter((value: string) => value !== '')
+                        // console.log(data)
+                        const textsData:TextsDataType = data.map((value: string) => ({
+                          key: Number(Math.random().toString().substr(3, 10) + Date.now()).toString(36),
+                          text: value,
+                          label: [],
+                          // textArr: []
+                          textArr: value.split('').map((font:string, index:number) => ({
+                            start: index,
+                            end: index,
+                            text: font,
+                            label: 'none',
+                            color: 'blue'
+                          }))
+                        }))
+                        updateTextsData(textsData)
+                        // console.log("textData",textsData)
+                        // axios.post(`/upload_texts`, textsData, {withCredentials: true})
+
+                        axios.post(`${PATH}/upload_texts`, textsData, {withCredentials: true})
+                            .then((res:AxiosResponse<any>) => {
+                              // console.log(res)
+                            })
+                        // updateAllTextsData(textsData)
+                        history.push('/index/texts')
+                        changeMenuSelect(['texts'])
+                        // stringList.push(name)
+                        // this.setState({ stringList })
+                        message.success('您已成功上传的语料数据', 1)
+                      }
+                    }
+                  } />
+                  <Button icon={<UploadOutlined />} onClick={
+                    () => {
+                      $('input#text-files').click()
+                      // const path: string = ipcRenderer.sendSync(UPLOAD_TEXTS_DATA)
+                      // if (path === '') {
+                      //   message.success('您已取消上传', 1);
+                      //   return;
+                      // }
+                      // stringList.push([path.split('\\')[path.split('\\').length - 1], path])
+                      let index = stringList.length;
+                      // for (let i = 0; i < stringList.length - 1; i++) {
+                      //   if (stringList[i][0] === path.split('\\').pop() && stringList[i][1] === path) {
+                      //     stringList.pop()
+                      //     index = i
+                      //     break;
+                      //   }
+                      // }
+                      this.setState({ openKeys: ['text'], selectedKeys: ['text' + index] })
+                      // this.readTxtFile(path)
+                    }
+                  }>
+                    上传语料
+                  </Button>
+                  <Button icon={<PlayCircleOutlined />} onClick={
+                    () => {
+                      // setLoadingState(true)
+                      // identifyEntity()
+                      // ipcRenderer.send(OPEN_MODEL_CONFIG_WINDOW)
+                      axios.post(`${PATH}/api/jiaguTrain`,{withCredentials:true}).then((res:any)=>{
+                        if(res.data.status === 400){
+                          message.error("调用失败")
+                        }else{
+                          
+                          message.success("调用成功")
+                        }
+                      })
+                    }
+                  }>
+                    实体标注
+                  </Button>
+                </div>
+                
+              </Menu>
+                  
+                <Switch>
+                  <Route path="/index/dictionary" component={DictionaryView} />
+                  <Route path="/index/texts" component={TextView}/>
+                  <Route path='/index/mark' component={MarkView} />
+                  <Route path='/index/dataVisualization' component={DataVisualView} />
+                  {/* <Route path='/index/' component={} /> */}
+
+                  <Route path='/index/train' component={TrainView} />
+                  
+                  {/* <Route path="/force-directed" component={ForceDirectedView} exact/> */}
+                </Switch>
+              </div>
+
+              <div style={{ width: '22%', height: '100%', marginLeft: '1%', background: 'white', float: 'left' }}>
+                
+                {/* <div style={{ marginTop: '1%' }}>
+                  <p style={{textAlign:'center',fontSize:"20px",height:"12px"}}>统计数据展示</p>
+                  <Descriptions
+                    // style={{fontSize:'20px'}}
+                    bordered
+                    // title="统计数据展示"
+                    size={'small'}
+                    column={1}
+                    labelStyle={{width:"140px",fontSize:"20px"}}
+                    contentStyle={{textAlign:'center'}}
+                  >
+                    <Descriptions.Item label="迭代次数">
+                      0次
+                    </Descriptions.Item>
+
+                    <Descriptions.Item label="总语料数据">
+                      {TextViewData.data.length}条 
+                    </Descriptions.Item>
+                    
+                    <Descriptions.Item label="总标注数据">
+                      {MarkViewData.data.length}条
+                    </Descriptions.Item>
+                    
+                    <Descriptions.Item label="总训练数据">
+                      {TrainViewData.data.length}条
+                    </Descriptions.Item>
+
+                  </Descriptions>
+                </div> */}
+
+                <div style={{ marginTop: '10%' ,height:"200px"}}>
+                  <MyPieChart height={'100%'} width={''} />
+                </div>
+
+                <div style={{ marginTop: '10%' }}>
+                  <h1 style={{ marginLeft: '5%' ,fontSize:"20px",fontWeight:"bold"}}>当前个人完成进度：</h1>
+                  
+
+                  <div className="my-process"
+                    style={{
+                      backgroundColor: "rgb(106, 179, 248)",
+                      /* transform: rotate(); */
+                      // border: 4px solid var(--border-color),
+                      // color: var(--border-color);
+                      borderRadius: "40px 40px 40px 40px",
+                      height: "150px",
+                      width: "330px",
+                      margin: "30px 30px",
+                      display: "flex",
+                      flexDirection: "row",
+                      overflow: "hidden"
+                    }}
+                  >
+                    {
+                      TextViewData.data.length === 0 ? '' : (
+                        <>
+                          <div className="complete" id="complete"
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              textAlign: "center",
+                              flex: "1",
+                              transition: "0.3s ease",
+                              // fontWeight: "bold",
+                              // fontSize: "30px",
+                            }}
+                          >
+                            {
+                              100 - Math.round( (TrainViewData.data.length / MarkViewData.data.length)*100) < 1 ? "" : (
+                                <>
+                                <span id="liters">已完成</span>
+                                <small 
+                                  style={{
+                                    fontWeight: "bold",
+                                    fontSize: "30px",
+                                  }}
+                                >{100 - Math.round( (TrainViewData.data.length / MarkViewData.data.length)*100)}</small>
+                                </>
+                              )
+                            }
+                          </div>
+
+                          <div className="undone" id="undone"
+                            style={{
+                              backgroundColor: "rgb(255, 116, 109)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              // fontWeight: "bold",
+                              // fontSize: "30px",
+                              width:`${Math.round( (TrainViewData.data.length / MarkViewData.data.length)*100)}%`,
+                              // height: "0",
+                              transition: "0.3s ease"
+                            }}
+                              
+                          >
+                            <div className="undone-text" 
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                textAlign: "center",
+                                flex: "1",
+                                transition: "0.3s ease",
+                                // fontWeight: "bold",
+                                // fontSize: "30px",
+                              }}
+                            >
+                              {
+                                Math.round( (TrainViewData.data.length / MarkViewData.data.length)*100) < 1 ? "" : (
+                                  <>
+                                    <span id="undone-percent"
+                                        style={{
+                                          // fontWeight: "bold",
+                                          // fontSize: "30px",
+                                        }}
+                                      >未完成</span>
+                                      <small 
+                                        style={{
+                                          fontWeight: "bold",
+                                          fontSize: "30px",
+                                        }}
+                                      >
+                                        {Math.round( (TrainViewData.data.length / MarkViewData.data.length)*100)}
+                                      </small>
+                                  </>
+                                )
+                              }
+                              
+                            
+                            </div>
+                          </div>
+                        </>
+                      )
+                    }
+
+                    
+
+                  </div>
+                  
+                  {/* <MyProcess></MyProcess> */}
+                  {/* <div
+                    style={{
+                      width:"100%",
+                      height:"160px",
+                      border:"5px solid black",
+                      borderRadius: "16px"
+                    }}
+                  >
+                    <p 
+                      style={{textAlign:'center',fontSize:"100px",float:"left",width:"48%"}}
+                    > 40</p>
+                    
+                    <svg style={{width:"10%",float:"left"}}>
+                    <line x1="0" y1="0" x2="0" y2="500"
+                        style={{stroke:"black",strokeWidth:"10"}}/>
+                    </svg>
+                    
+                    <p
+                      style={{textAlign:'center',fontSize:"100px",float:"left",width:"40%"}}
+                    >
+                      60
+                    </p>
+                  </div> */}
+
+                </div>
+                
+                <div style={{ marginTop: '0%' }}>
+                  <h1 style={{ marginLeft: '5%' ,fontSize:"20px",fontWeight:"bold"}}>当前项目完成进度：</h1>
+                  <BatteryCharge/>
+                  {/* <Progress type="circle" percent={65} width={260} style={{ marginTop: '10%', marginLeft: '17%' }} /> */}
+                </div>
               
-              {/* <Route path="/force-directed" component={ForceDirectedView} exact/> */}
-            </Switch>
-          </Content>
+              </div>
+              
+            </Content>
+            
+          </Layout>
         </Layout>
       </Layout>
     )
@@ -393,7 +629,7 @@ class Main extends Component<MainProps, MainState>{
             [label: string]: TableDataType
           } = {}
           const { data } = response;
-          console.log(data)
+          // console.log(data)
           for(let i = data.length - 1; i > 0; i--) {
             if(labelList.includes(data[i]['label'])) {
               dictionaryData[data[i]['label']].push(data[i])
@@ -431,12 +667,15 @@ class Main extends Component<MainProps, MainState>{
 
 
 const mapStateToProps = (state: StoreType, ownProps?: any) => {
-  const { Main,MenuView } = state
+  const { Main,MenuView ,TextView,MarkView,TrainView} = state
   // console.log()
   return {
     ...ownProps,
     ...Main,
-    ...MenuView
+    ...MenuView,
+    TextViewData:TextView,
+    MarkViewData:MarkView,
+    TrainViewData:TrainView
   }
 }
 

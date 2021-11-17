@@ -53,7 +53,7 @@ const initStore:StoreType = {
         current: 1
     },
     MenuView:{
-        MenuSelectKey:['mark']
+        MenuSelectKey:[]
     }
 }
 
@@ -220,7 +220,7 @@ const MenuReducer = (state: MenuStoreType = initStore.MenuView, action: any) => 
             ...state,
             MenuSelectKey:specifyOptions
         }
-        console.log('afterState',afterState)
+        // console.log('afterState',afterState)
         return afterState
     }
     return state
