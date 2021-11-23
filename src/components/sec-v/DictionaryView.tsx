@@ -6,27 +6,25 @@ import {
 import { Table, Input, Tag, Button, Modal, message as Message, message } from "antd";
 import React, { Component } from "react";
 import Icon from "@ant-design/icons";
-import { AddIcon, SaveIcon } from "./Icon";
+import { AddIcon, SaveIcon } from "./../Icon";
 import { connect } from "react-redux";
 import XLSX from 'xlsx'
-import { modifyLabelOfDictionaryData, updateDictionaryData } from "../action";
+import { modifyLabelOfDictionaryData, updateDictionaryData } from "../../action";
 import {
   DictionaryViewStoreType,
   StoreType,
   TableDataType,
-} from "../types/propsTypes";
+} from "../../types/propsTypes";
 import axios, { AxiosResponse } from "axios";
-import { PATH } from "../types/actionTypes";
+import { PATH } from "../../types/actionTypes";
 
 axios.defaults.withCredentials = true;
-
-
 
 interface DictionaryViewProps extends DictionaryViewStoreType {
   updateDictionaryData: typeof updateDictionaryData;
   modifyLabelOfDictionaryData: typeof modifyLabelOfDictionaryData;
   match: any;
-  history: any,
+  history: any
 }
 interface DictionaryViewState {
   pageSize: number;
@@ -47,7 +45,7 @@ class DictionaryView extends Component<
   public constructor(props: DictionaryViewProps) {
     super(props);
     this.state = {
-      pageSize: 12,
+      pageSize: 14,
       tableData: [],
       inputNameByShow: "",
       inputVisibleName: "",
@@ -76,13 +74,75 @@ class DictionaryView extends Component<
           // backgroundColor: 'red'
         }}
       >
+        <Button
+          type="primary"
+          size="middle"
+          icon={<Icon component={SaveIcon} />}
+          
+          style={{
+            position: "absolute",
+            top: 40,
+            zIndex:99
+          }}
+          onBlur={() => {
+            console.log("button-outport")
+          }}
+          onClick={() => {
+            /* original data */
+            var filename = "dict.xls";
+            // const data:Array<Array<string>> = [['标签', '全称', '别名']]
+            const data:Array<Array<string>> = tableData.map((value: { name: string; label: string; key?: string | undefined; abbreviations: string[]; }) => [
+              value['label'], value['name'], ...value['abbreviations']
+            ])
+            data.unshift(['标签', '全称', '别名'])
+            // const data = 
+            var sheetName = "Sheet1";
+            var wb = XLSX.utils.book_new(),
+              ws = XLSX.utils.aoa_to_sheet(data);
+            /* add worksheet to workbook */
+            XLSX.utils.book_append_sheet(wb, ws, sheetName);
+            /* write workbook */
+            XLSX.writeFile(wb, filename);
+          }}
+        >
+          导出
+        </Button>
+        <Button
+          size="middle"
+          type="primary"
+          icon={<Icon component={AddIcon} />}
+          onClick={() => {
+            tableData.unshift({
+              key: "00",
+              name: "",
+              label: tableData.length ? tableData[0]["label"] : "",
+              abbreviations: [],
+            });
+            // // console.log('data')
+            // this.setState({ inputNameByShow: '0' })
+            updateDictionaryData([...tableData]);
+            modifyLabelOfDictionaryData(label, [...tableData]);
+          }}
+          style={{
+            zIndex:99,
+            position: "absolute",
+            top: 40,
+            left: 100,
+          }}
+        >
+          增加字典
+        </Button>
         <Table
           dataSource={tableData}
-          size="middle"
-          scroll={{ y: 780 }}
+          size="small"
+          scroll={{ 
+            y:800,
+            // x:"max-content"
+            x:1000 
+          }}
           pagination={{
             pageSize,
-            position: ["bottomRight"],
+            position: ["topRight"],
             showSizeChanger: true,
             onChange: (page: number, pageSize?: number) => {
               this.setState({ pageSize: pageSize as number });
@@ -94,7 +154,8 @@ class DictionaryView extends Component<
             title="名称"
             dataIndex="name"
             key="name"
-            width="15%"
+            width="10%"
+            fixed="left"
             render={(name: string, r: {
               name: string,
               label: string,
@@ -103,9 +164,6 @@ class DictionaryView extends Component<
             }, i: number) => {
               return inputNameByShow !== name ? (
                 <div
-                  style={{
-                    fontSize:"20px"
-                  }}
                   onMouseEnter={() => {
                     this.setState({ inputNameByShow: name }, () => {
                       this.nameInput.focus();
@@ -172,10 +230,6 @@ class DictionaryView extends Component<
                     closable
                     color="blue"
                     key={abbreviation}
-                    style={{
-
-                      // fontSize:"20px"
-                    }}
                     onClose={(e) => {
                       e.preventDefault();
                       const newNames: Array<string> = abbreviations.filter(
@@ -273,58 +327,7 @@ class DictionaryView extends Component<
             }}
           />
         </Table>
-        <Button
-          type="primary"
-          size="middle"
-          icon={<Icon component={SaveIcon} />}
-          style={{
-            position: "absolute",
-            top: 10,
-          }}
-          onClick={() => {
-            /* original data */
-            var filename = "dict.xls";
-            // const data:Array<Array<string>> = [['标签', '全称', '别名']]
-            const data:Array<Array<string>> = tableData.map((value: { name: string; label: string; key?: string | undefined; abbreviations: string[]; }) => [
-              value['label'], value['name'], ...value['abbreviations']
-            ])
-            data.unshift(['标签', '全称', '别名'])
-            // const data = 
-            var sheetName = "Sheet1";
-            var wb = XLSX.utils.book_new(),
-              ws = XLSX.utils.aoa_to_sheet(data);
-            /* add worksheet to workbook */
-            XLSX.utils.book_append_sheet(wb, ws, sheetName);
-            /* write workbook */
-            XLSX.writeFile(wb, filename);
-          }}
-        >
-          导出
-        </Button>
-        <Button
-          size="middle"
-          type="primary"
-          icon={<Icon component={AddIcon} />}
-          onClick={() => {
-            tableData.unshift({
-              key: "00",
-              name: "",
-              label: tableData.length ? tableData[0]["label"] : "",
-              abbreviations: [],
-            });
-            // // console.log('data')
-            // this.setState({ inputNameByShow: '0' })
-            updateDictionaryData([...tableData]);
-            modifyLabelOfDictionaryData(label, [...tableData]);
-          }}
-          style={{
-            position: "absolute",
-            top: 10,
-            left: 120,
-          }}
-        >
-          增加字典
-        </Button>
+        
       </div>
     );
   }

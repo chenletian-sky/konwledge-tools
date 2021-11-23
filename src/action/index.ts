@@ -13,7 +13,8 @@ import {
   UPDATE_TRAIN_DATA,
   UPDATE_ALL_TEXTS_DATA,
   DELETE_TRAIN_DATA,
-  CHANGE_MENU_SELECTION
+  CHANGE_MENU_SELECTION,
+  CHANGE_CLUSTERINGPLOT_CLASS
 } from '../types/actionTypes'
 import { MarkTextsDataType, TableDataType, TextsDataType } from '../types/propsTypes'
 
@@ -126,9 +127,18 @@ export const identifyEntity = () => ({
 })
 
 /**
- * 
+ * 改变菜单的选项
  */
 export const changeMenuSelect = (specifyOptions:Array<string>) => ({
   type:CHANGE_MENU_SELECTION,
   specifyOptions
 })
+
+/**
+ * 改变散点图的类
+ */
+export const changeClusteringPlotClass = (classId:string) => ({
+  type:CHANGE_CLUSTERINGPLOT_CLASS,
+  classId
+})
+

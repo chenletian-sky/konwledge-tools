@@ -95,6 +95,15 @@ export const MenuLabelIcon = (props:any) =>(
 	</svg>
 )
 
+/**
+ * 
+ */
+export const importIcon =  (props:any) => (
+	<svg viewBox="0 0 1024 1024" width="1em" height="1em">
+		<path d="M328 576h152V128h64v448h152L512 768 328 576z m568-64h-64v320H192V512h-64v384h768V512z" p-id="2636"></path>
+	</svg>
+)
+
 
 /***
  * logo

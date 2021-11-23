@@ -78,3 +78,8 @@ export const DELETE_TRAIN_DATA = 'DELETE_TRAIN_DATA'
  * 更新菜单选项
  */
 export const CHANGE_MENU_SELECTION = 'CHANGE_MENU_SELECTION'
+
+/**
+ * 更新散点选中的类
+ */
+export const CHANGE_CLUSTERINGPLOT_CLASS = 'CHANGE_CLUSTERINGPLOT_CLASS'

@@ -4,13 +4,13 @@ import 'antd/dist/antd.css';
 import Icon, { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 // import $ from 'jquery'
 import { ColorResult, SketchPicker } from 'react-color';
-import { SettingIcon } from './Icon';
+import { SettingIcon } from './../Icon';
 import { connect } from 'react-redux';
-import { FontObject, MarkTextsDataType, MarkViewStoreType, StoreType, TextsDataType } from '../types/propsTypes';
-import { changeMenuSelect, updateMarkTextData, updateTextTablePage, updateTrainData } from '../action';
-import { updateTextsData } from '../action';
+import { FontObject, MarkTextsDataType, MarkViewStoreType, StoreType, TextsDataType } from '../../types/propsTypes';
+import { changeMenuSelect, updateMarkTextData, updateTextTablePage, updateTrainData } from '../../action';
+import { updateTextsData } from '../../action';
 import axios, { AxiosResponse } from 'axios';
-import { PATH } from '../types/actionTypes';
+import { PATH } from '../../types/actionTypes';
 
 
 
@@ -99,11 +99,7 @@ class MarkView extends Component<MarkViewProps, MarkViewState>{
 				render: (text: Array<FontObject>, record: unknown, index: number) => {
 					const { data, current, updateMarkTextData, updateTextsData } = this.props
 					return (
-						<div 
-							style={{
-								fontSize:"20px"
-							}}
-						onMouseUp={
+						<div onMouseUp={
 							() => {
 								let start = Math.min(this.startIndex, this.endIndex)
 								let end = Math.max(this.startIndex, this.endIndex)
@@ -421,10 +417,10 @@ class MarkView extends Component<MarkViewProps, MarkViewState>{
 					}
 				</div>
 				
-				<Table columns={this.columns} dataSource={data} size='middle' 
-					scroll={{ y: 750 }}
+				<Table columns={this.columns} dataSource={data} size='small' 
+					scroll={{ y: 450 }}
 					pagination={{
-						pageSize: 12,
+						pageSize: 10,
 						current,
 						simple: true,
 						position: ['bottomRight'],

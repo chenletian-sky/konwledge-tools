@@ -4,15 +4,15 @@ import {
   Switch,
 } from 'react-router-dom'
 // antd组件库
-import { Layout, Menu, Button, message, Avatar, Dropdown, Select, Progress, Descriptions, Space } from 'antd';
+import { Layout, Menu, Button, message, Avatar, Dropdown, Select, Progress, Descriptions, Space, Divider, Modal, Spin, Alert } from 'antd';
 import 'antd/dist/antd.css';
 import { UploadOutlined, PlayCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import Icon, { UserOutlined } from '@ant-design/icons';
 // 自定义icon
-import { DictionaryIcon, TrainIcon,DataVisualIcon, LabelIcon, MenuLabelIcon, Logo } from './Icon';
+import { DictionaryIcon, TrainIcon,DataVisualIcon, LabelIcon, MenuLabelIcon, Logo, SaveIcon, importIcon } from './Icon';
 // redux
 import { connect } from 'react-redux';
-import { MainStoreType, StoreType, TableDataType, TextsDataType ,MenuStoreType, TextViewStoreType, MarkViewStoreType} from '../types/propsTypes';
+import { MainStoreType, StoreType, TableDataType, TextsDataType ,MenuStoreType, TextViewStoreType, MarkViewStoreType, InitMarkText} from '../types/propsTypes';
 import { identifyEntity,changeMenuSelect, setLoadingState, updateAllDictionaryData, updateAllTextsData, updateDictionaryData, updateLabelByShow, updateMarkTextData, updateTextsData } from '../action';
 // 路由页面
 import DictionaryView from './DictionaryView';
@@ -30,6 +30,9 @@ import TrainView from './TrainView';
 import MyPieChart from './EchartComponents/MyPieChart';
 import BatteryCharge from './Animation/BatteryCharge';
 import MyProcess from './Animation/MyProcess';
+import ClusteringPlot from './ClusteringPlot/index';
+import WordCloud from './WordCloud/yu/index';
+import LoadingOutlined from '@ant-design/icons/lib/icons/LoadingOutlined';
 
 // import { DictionaryIcon, TrainIcon } from './Icon'
 // import { MainStoreType, StoreType, TextsDataType } from '../types/propsTypes';
@@ -45,6 +48,17 @@ import MyProcess from './Animation/MyProcess';
  * 允许跨域携带cookie信息
  */
 axios.defaults.withCredentials = true
+
+interface MenuSelectKeyChangeType{
+  [index:string]:string
+}
+
+const MenuSelectKeyChange:MenuSelectKeyChangeType ={
+  "texts":"语料数据",
+  'mark':"标注数据",
+  'train':"训练数据",
+  '':"知识图谱项目"
+} 
 
 interface MainProps extends MainStoreType , MenuStoreType,StoreType{
   history: any,
@@ -72,7 +86,10 @@ interface MainState {
   repositories: Array<{
     name: string,
     repositoryId: string,
-  }>
+  }>,
+  isLoading:boolean,
+  isUpload:boolean,
+  isComplete:boolean
 }
 class Main extends Component<MainProps, MainState>{
   public constructor(props: MainProps) {
@@ -89,6 +106,9 @@ class Main extends Component<MainProps, MainState>{
       // menuSelectKeys:['texts'],
       selectedKeys: [],
       repositories: [{ name: '私有仓库', repositoryId: 'private' }],
+      isLoading:false,
+      isUpload:false,
+      isComplete:false
     }
   }
 
@@ -133,7 +153,9 @@ class Main extends Component<MainProps, MainState>{
             theme="light"
             mode="inline"
             openKeys={openKeys}
-
+            style={{
+              fontSize:"20px"
+            }}
             selectedKeys={MenuSelectKey} 
             // selectedKeys={this.props.}
 
@@ -218,8 +240,180 @@ class Main extends Component<MainProps, MainState>{
             </Menu.Item>
             
             
+            <SubMenu
+              key='uploadData'
+              title="上传数据"
+              icon={<Icon component={importIcon}/>}
+              style={{
+                fontSize:"20px"
+              }}
+              onTitleClick={(e)=>{
+                this.setState({ openKeys: openKeys[0] === e.key ? [] : [e.key] })
+              }}
+            >
+              <Menu.Item
+                onClick={()=>{
+                  this.setState({
+                    isUpload:true
+                  })
+                  $('input#dict-files').click()
+                  this.setState({ openKeys: ['dictionary'] })
+                }}
+              >
+                上传字典
+              </Menu.Item>
+              <Menu.Item
+                onClick={()=>{
+                  
+                  $('input#text-files').click()
+                  // const path: string = ipcRenderer.sendSync(UPLOAD_TEXTS_DATA)
+                  // if (path === '') {
+                  //   message.success('您已取消上传', 1);
+                  //   return;
+                  // }
+                  // stringList.push([path.split('\\')[path.split('\\').length - 1], path])
+                  let index = stringList.length;
+                  // for (let i = 0; i < stringList.length - 1; i++) {
+                  //   if (stringList[i][0] === path.split('\\').pop() && stringList[i][1] === path) {
+                  //     stringList.pop()
+                  //     index = i
+                  //     break;
+                  //   }
+                  // }
+                  // this.setState({
+                  //   isLoading:true
+                  // })
+                  
+                  this.setState({ openKeys: ['text'], selectedKeys: ['text' + index] })
+                  // this.readTxtFile(path)
+                }}
+              >
+                上传语料
+              </Menu.Item>
+            </SubMenu>
+
+            <Menu.Item
+              icon={<DataVisualIcon/>}
+              onClick={()=>{
+                this.setState({
+                  isLoading:true
+                })
+                axios.post(`${PATH}/api/init_vec`,{withCredentials: true}).then((res:AxiosResponse<any,any>) => {
+                  if(res.data.status === 200 ){
+                    this.setState({
+                      isLoading:false,
+                      // isComplete:true
+                    })
+
+                    
+                  }
+                })
+              }}
+            >
+              &nbsp;数据分类
+            </Menu.Item>
+            <Menu.Item
+              // icon={<Icon component={LabelIcon} />}
+              icon={<TrainIcon/>}
+              onClick={()=>{
+                axios.post(`${PATH}/api/initTextsWithDic`,{withCredentials:true}).then((res:any)=>{
+                  if(res.data.status === 400){
+                    message.error('初始化失败',1)
+                  }else if(res.data.status == 200){
+                    message.success('初始化成功',1)
+                    
+                    axios.get(`${PATH}/get_xferStation` )
+                            .then((res: AxiosResponse<any>) => {
+                              const { data: response } = res;
+                              if (response['status'] === 200 && response['message'] === '获取成功') {
+                                // console.log("before",response.data)
+                                
+                                const fileData = response.data
+                                
+                                const after =  fileData.map((value:InitMarkText, i: string)=>{
+                                  let returnValue = {
+                                      text: value['text'],
+                                      key: Number(Math.random().toString().substr(3, 10) + Date.now()).toString(36),
+                                      textArr: value['text'].split('').map((v: any, index: any) => ({
+                                          text: v,
+                                          start: index,
+                                          end: index,
+                                          label: 'none',
+                                          color: '',
+                                      }))
+                                  }
+                                  for(let i = value['labels'].length - 1; i >= 0; i--) {
+                                      const { start, end, label } = value['labels'][i]
+                                      // console.log("each",start,end,label)
+                                      returnValue['textArr'].splice(start, end - start)
+                                      returnValue['textArr'].splice(start, 0, {
+                                          text: value['text'].slice(start, end),
+                                          start,
+                                          end: end - 1,
+                                          label,
+                                          color:'#d1c7b7'
+                                      })
+                                  }
+
+                                  return returnValue
+                                })
+                                
+                                // console.log(after)
+                                
+                                
+                                updateTextsData(after)
+                                updateMarkTextData(after)
+
+                                axios.get(`${PATH}/delete_xferStation`,{withCredentials:true}).then((res:AxiosResponse<any>) =>{
+                                  if(res.data.status === 200){
+                                    // console.l
+                                    message.success("初始化中转站成功！")
+                                  }
+                                })
+
+                                axios.post(`${PATH}/update_texts`,after,{withCredentials:true}).then((res:AxiosResponse<any>) => {
+                                  // console.log(res.data)
+                                  if(res.data.status === 200){
+                                    message.success("语料更新成功！")
+
+                                    this.props.history.push('/index/mark')
+                                    changeMenuSelect(['mark'])
+                                  }else{
+                                    message.error("语料更新失败！")
+                                  }
+                                })
+                                
+                              } else {
+                                message.error('请您先登录', 1.5, () => {
+                                  this.props.history.push('/')
+                                })
+                              }
+                            })
+                  }
+                })
+              }}
+            >
+              &nbsp;匹配字典
+            </Menu.Item>
+
+            <SubMenu
+              key={"exportData"}
+              title="导出数据"
+              icon={<UploadOutlined/>}
+              style={{
+                fontSize:"20px"
+              }}
+              onTitleClick={(e)=>{
+                this.setState({ openKeys: openKeys[0] === e.key ? [] : [e.key] })
+              }}
+            >
+              <Menu.Item>导出excel</Menu.Item>
+              <Menu.Item>导出json</Menu.Item>
+              <Menu.Item>导出txt</Menu.Item>
+              {/* <Menu.Item></Menu.Item> */}
+            </SubMenu>
             
-            <Menu.Item 
+            {/* <Menu.Item 
               style={{fontSize:'20px'}}
               key="dataVisualization" icon={<DataVisualIcon/>} onClick={
               () => {
@@ -229,13 +423,27 @@ class Main extends Component<MainProps, MainState>{
               }
             }>
               &nbsp;数据可视化
-            </Menu.Item>
+            </Menu.Item> */}
            
           </Menu>
         </Sider>
-        <Layout className="site-layout"  style={{height:'100%'}}>
-          <Header className="site-layout-background" style={{ padding: 0, backgroundColor: 'white' }}>
-            <Menu mode="horizontal" style={{ fontSize: '1.5em', width: '100%', color: 'white', backgroundColor: 'rgb(22,21,204)' }}>
+        {
+          
+            // <Spin
+            //   size="large"
+            //   indicator={<LoadingOutlined spin />}
+            //   style={{
+            //     height:"100%",
+            //     width:"100%",
+            //     position:'relative',
+            //     top:"400px"
+            //   }}
+            // >
+            // </Spin>
+            
+          <Layout className="site-layout"  style={{height:'100%'}}>
+          <Header className="site-layout-background" style={{ padding: 0, backgroundColor: 'rgb(22,21,204)' }}>
+            {/* <Menu mode="horizontal" style={{ fontSize: '1.5em', width: '100%', color: 'white', backgroundColor: 'rgb(22,21,204)' }}>
               <Menu.Item key={'create'} 
               // icon={<Icon component={CreateIcon}></Icon>}
                 onClick={
@@ -251,7 +459,7 @@ class Main extends Component<MainProps, MainState>{
                 <Menu.Item>仓库1</Menu.Item>
                 <Menu.Item>仓库2</Menu.Item>
               </SubMenu>
-            </Menu>
+            </Menu> */}
             <Avatar size='default' icon={<UserOutlined />} style={{
               float: 'right',
               // marginTop: '15px',
@@ -272,9 +480,13 @@ class Main extends Component<MainProps, MainState>{
             >
 
               {/* <Loading /> */}
-            <div style={{ width: '75%', height: '96%', marginTop: '1%', marginLeft: '1%', background: 'white', float: 'left' }}>
+            <div style={{ width: '60%', height: '96%', marginTop: '1%', marginLeft: '1%', background: 'white', float: 'left' }}>
               <Menu mode="horizontal" style={{ fontSize: '1em', width: '100%', color: 'white', backgroundColor: 'rgb(120,166,234)' }}>
-              <div style={{ fontSize: '1.2em', paddingLeft: '1%' }}>知识图谱项目</div>
+              <div style={{ fontSize: '1.2em', paddingLeft: '1%' }}>
+              {
+                this.props.MenuSelectKey[0] ? MenuSelectKeyChange[this.props.MenuSelectKey[0]] :
+                "知识图谱项目"
+              }</div>
                 <div style={{ paddingLeft: "59%" }}>
                   <input type="file"  id="dict-files" accept='application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
                     style={{ display: 'none' }} onChange={
@@ -312,6 +524,11 @@ class Main extends Component<MainProps, MainState>{
                           }
                           axios.post(`${PATH}/upload_dictionary`, dataByAdd, {withCredentials: true})
                             .then((res:AxiosResponse<any>) => {
+                              if(res.data.status){
+                                // this.setState({
+                                //   isUpload:false
+                                // })
+                              }
                               // console.log(res.data)
                             })
                           history.push('/index/dictionary')
@@ -322,14 +539,14 @@ class Main extends Component<MainProps, MainState>{
                       }
                     }
                   />
-                  <Button icon={<UploadOutlined />} onClick={
+                  {/* <Button icon={<UploadOutlined />} onClick={
                     () => {
                       $('input#dict-files').click()
                       this.setState({ openKeys: ['dictionary'] })
                     }
                   }>
                     上传字典
-                  </Button>
+                  </Button> */}
                   <input type="file" id="text-files" placeholder='a.txt' accept='text/plain' style={{
                     display: 'none'
                   }} onChange={
@@ -359,21 +576,42 @@ class Main extends Component<MainProps, MainState>{
                         updateTextsData(textsData)
                         // console.log("textData",textsData)
                         // axios.post(`/upload_texts`, textsData, {withCredentials: true})
+                        
+                        // this.setState({
+                        //   isUpload:true
+                        // })
 
                         axios.post(`${PATH}/upload_texts`, textsData, {withCredentials: true})
                             .then((res:AxiosResponse<any>) => {
+                              if(res.data.status === 200){
+                                this.setState({
+                                  // isLoading:true
+                                })
+
+                                
+                                
+                              }
                               // console.log(res)
+                            }).finally(()=>{
+                              console.log('finally')
+                              
                             })
-                        // updateAllTextsData(textsData)
+                        
+
                         history.push('/index/texts')
                         changeMenuSelect(['texts'])
+                        message.success('您已成功上传的语料数据', 1)
+                        // this.setState({
+                        //   isComplete:true
+                        // })
+                        // updateAllTextsData(textsData)
+                        
                         // stringList.push(name)
                         // this.setState({ stringList })
-                        message.success('您已成功上传的语料数据', 1)
                       }
                     }
                   } />
-                  <Button icon={<UploadOutlined />} onClick={
+                  {/* <Button icon={<UploadOutlined />} onClick={
                     () => {
                       $('input#text-files').click()
                       // const path: string = ipcRenderer.sendSync(UPLOAD_TEXTS_DATA)
@@ -395,8 +633,8 @@ class Main extends Component<MainProps, MainState>{
                     }
                   }>
                     上传语料
-                  </Button>
-                  <Button icon={<PlayCircleOutlined />} onClick={
+                  </Button> */}
+                  {/* <Button icon={<PlayCircleOutlined />} onClick={
                     () => {
                       // setLoadingState(true)
                       // identifyEntity()
@@ -412,7 +650,7 @@ class Main extends Component<MainProps, MainState>{
                     }
                   }>
                     实体标注
-                  </Button>
+                  </Button> */}
                 </div>
                 
               </Menu>
@@ -430,39 +668,53 @@ class Main extends Component<MainProps, MainState>{
                 </Switch>
               </div>
 
-              <div style={{ width: '22%', height: '100%', marginLeft: '1%', background: 'white', float: 'left' }}>
+              <div style={{ width: '38%', height: '100%', marginLeft: '1%', background: 'white', float: 'left' }}>
                 
-                {/* <div style={{ marginTop: '1%' }}>
-                  <p style={{textAlign:'center',fontSize:"20px",height:"12px"}}>统计数据展示</p>
-                  <Descriptions
-                    // style={{fontSize:'20px'}}
-                    bordered
-                    // title="统计数据展示"
-                    size={'small'}
-                    column={1}
-                    labelStyle={{width:"140px",fontSize:"20px"}}
-                    contentStyle={{textAlign:'center'}}
+                <div
+                  id='ClusteringPlot'
+                  style={{
+                    height:'50%',
+                    width:"100%"
+                  }}
+                >
+                  {
+                    this.state.isLoading ? (<Spin></Spin>) :(<ClusteringPlot history={this.props.history}/>)
+                  }
+                </div>
+
+                  <div
+                    style={{
+                      height:'1%',
+                      width:"100%",
+                      backgroundColor:"rgb(241, 241, 241)"
+
+                    }}
                   >
-                    <Descriptions.Item label="迭代次数">
-                      0次
-                    </Descriptions.Item>
 
-                    <Descriptions.Item label="总语料数据">
-                      {TextViewData.data.length}条 
-                    </Descriptions.Item>
-                    
-                    <Descriptions.Item label="总标注数据">
-                      {MarkViewData.data.length}条
-                    </Descriptions.Item>
-                    
-                    <Descriptions.Item label="总训练数据">
-                      {TrainViewData.data.length}条
-                    </Descriptions.Item>
+                  </div>
+                {/* <Divider
+                  style={{
+                    height:"0px"
+                  }}
+                ></Divider> */}
 
-                  </Descriptions>
-                </div> */}
+                <div
+                  id='WordCloud'
+                  style={{
+                    height:'49%',
+                    width:"100%"
+                  }}
+                >
+                  {
+                    this.state.isLoading ? (<Spin></Spin>) :(<WordCloud 
+                      wordCloudClass = {this.props.classId}
+                      isComplete={this.state.isComplete}
+                    />)
+                  }
+                  
+                </div>
 
-                <div style={{ marginTop: '10%' ,height:"200px"}}>
+                {/* <div style={{ marginTop: '10%' ,height:"200px"}}>
                   <MyPieChart height={'100%'} width={''} />
                 </div>
 
@@ -473,7 +725,6 @@ class Main extends Component<MainProps, MainState>{
                   <div className="my-process"
                     style={{
                       backgroundColor: "rgb(106, 179, 248)",
-                      /* transform: rotate(); */
                       // border: 4px solid var(--border-color),
                       // color: var(--border-color);
                       borderRadius: "40px 40px 40px 40px",
@@ -574,39 +825,14 @@ class Main extends Component<MainProps, MainState>{
                     
 
                   </div>
-                  
-                  {/* <MyProcess></MyProcess> */}
-                  {/* <div
-                    style={{
-                      width:"100%",
-                      height:"160px",
-                      border:"5px solid black",
-                      borderRadius: "16px"
-                    }}
-                  >
-                    <p 
-                      style={{textAlign:'center',fontSize:"100px",float:"left",width:"48%"}}
-                    > 40</p>
-                    
-                    <svg style={{width:"10%",float:"left"}}>
-                    <line x1="0" y1="0" x2="0" y2="500"
-                        style={{stroke:"black",strokeWidth:"10"}}/>
-                    </svg>
-                    
-                    <p
-                      style={{textAlign:'center',fontSize:"100px",float:"left",width:"40%"}}
-                    >
-                      60
-                    </p>
-                  </div> */}
 
                 </div>
                 
                 <div style={{ marginTop: '0%' }}>
                   <h1 style={{ marginLeft: '5%' ,fontSize:"20px",fontWeight:"bold"}}>当前项目完成进度：</h1>
                   <BatteryCharge/>
-                  {/* <Progress type="circle" percent={65} width={260} style={{ marginTop: '10%', marginLeft: '17%' }} /> */}
-                </div>
+
+                </div> */}
               
               </div>
               
@@ -614,6 +840,8 @@ class Main extends Component<MainProps, MainState>{
             
           </Layout>
         </Layout>
+        }
+        
       </Layout>
     )
   }
@@ -658,6 +886,14 @@ class Main extends Component<MainProps, MainState>{
         }
       })
     
+    axios.get(`${PATH}/get_wordCloudData`,{withCredentials:true}).then((res:AxiosResponse<any,any>) => {
+      // console.log('wordCloudData',res.data)
+      if(res.data.data === {}){
+        this.setState({
+          isComplete:true
+        })
+      }
+    })
 
   }
 

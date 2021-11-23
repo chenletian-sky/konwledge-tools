@@ -8,8 +8,8 @@ import { Layout, Menu, Button, message, Avatar, Dropdown, Select } from 'antd';
 
 
 
-import ClusteringPlot from './ClusteringPlot'
-import WordCloud from './WordCloud/index'
+import ClusteringPlot from './ClusteringPlot/test'
+import WordCloud from './WordCloud/test'
 
 interface DataVisualViewProps {
   history:any

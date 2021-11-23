@@ -5,12 +5,12 @@ import { ExclamationCircleOutlined, DeleteOutlined ,SearchOutlined} from '@ant-d
 import Icon from '@ant-design/icons';
 import { saveAs } from 'file-saver';
 
-import { AddIcon, CircleIcon, LabelIcon, SaveIcon, UpdateIcon } from './Icon';
+import { AddIcon, CircleIcon, LabelIcon, SaveIcon, UpdateIcon } from './../Icon';
 import { connect } from 'react-redux';
-import { FontObject, InitMarkText, MenuStoreType, StoreType, TextViewStoreType } from '../types/propsTypes';
-import { changeMenuSelect, updateIsSave, updateMarkTextData, updateTextsData, updateTextTablePage } from '../action';
+import { FontObject, InitMarkText, MenuStoreType, StoreType, TextViewStoreType } from '../../types/propsTypes';
+import { changeMenuSelect, updateIsSave, updateMarkTextData, updateTextsData, updateTextTablePage } from '../../action';
 import axios, { AxiosResponse } from 'axios';
-import { PATH } from '../types/actionTypes';
+import { PATH } from '../../types/actionTypes';
 import Highlighter from 'react-highlight-words';
 
 interface TextViewProps extends TextViewStoreType , MenuStoreType{
@@ -25,10 +25,7 @@ interface TextViewState {
   editKey: string,
   pageSize: number,
   searchedColumn:string,
-  searchText:string,
-  selectedRowKeys:Array<any>,
-  selectedRows:Array<any>,
-  buttonStateIsEdit:boolean
+  searchText:string
 }
 
 
@@ -38,12 +35,9 @@ class TextView extends Component<TextViewProps, TextViewState>{
     super(props)
     this.state = {
       editKey: '',
-      pageSize: 12,
+      pageSize: 10,
       searchText:'',
-      searchedColumn:'',
-      selectedRowKeys: [],
-			selectedRows: [],
-      buttonStateIsEdit:false
+      searchedColumn:''
     }
     
   }
@@ -63,8 +57,7 @@ class TextView extends Component<TextViewProps, TextViewState>{
   };
 
   public render(): JSX.Element {
-    const { pageSize ,selectedRowKeys,selectedRows} = this.state
-    const {TextArea} = Input
+    const { pageSize } = this.state
     const { data, isSave, current, history, updateTextsData,changeMenuSelect, updateTextTablePage, updateMarkTextData } = this.props
     const _this = this
     // data.forEach((value: { key?: string; text: string; label: any; }, index: number,) => {
@@ -75,16 +68,14 @@ class TextView extends Component<TextViewProps, TextViewState>{
       {
         title: <div style={{
           width: '100%',
-          textAlign: 'center',
-          
+          textAlign: 'center'
         }}>
           文本
         </div>,
         dataIndex: 'text',
         key: 'text',
-        width: '100%',
+        width: '35%',
         // ellipsis: true,
-        
         align: 'left',
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters,dataIndex}: any ) => {
             // console.log("typeof",typeof setSelectedKeys,typeof selectedKeys,typeof confirm,typeof clearFilters)
@@ -148,25 +139,15 @@ class TextView extends Component<TextViewProps, TextViewState>{
           return (editKey !== record['key'] ?
             
             (
-                <div
-                  style={{
-                    fontSize:'20px'
-                  }}
-                >
-                  {text}
-                  {/* <Highlighter
+                <Highlighter
                   highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
                   searchWords={[this.state.searchText]}
                   autoEscape
                   textToHighlight={text ? text.toString() : ''}
-                  
-                /> */}
-                </div>
-                
+                />
               )  :
             <TextArea
               value={text}
-              
               onChange={
                 (e) => {
                   const newText = e.target.value
@@ -185,76 +166,73 @@ class TextView extends Component<TextViewProps, TextViewState>{
               autoSize
             />)
         }
-      }, 
-      // {
-      //   title: '操作',
-      //   dataIndex: 'kind',
-      //   render: (label: string, record: { key: string, text: string, label: any, _id:string }, index: number) => (
-      //     <React.Fragment>
-      //       <Button size='small' type='primary' onClick={
-      //         () => {
-      //           const editKey: string = this.state.editKey === record['key'] ? '' : record['key']
-      //           this.setState({ editKey })
-      //         }
-      //       } style={{
-      //         // float: 'right',
-      //         marginRight: '10px'
-      //       }}>
-      //         {this.state.editKey === record['key'] ? '保存' : '编辑'}
-      //       </Button>
-      
-      //       <Button size='small' type='primary' onClick={
-      //         () => {
-      //           const { data, updateTextsData } = this.props
-      //           Modal.confirm({
-      //             title: '警告',
-      //             icon: <ExclamationCircleOutlined />,
-      //             content: '请确认是否要删除改文本',
-      //             okText: '确认',
-      //             cancelText: '取消',
-      //             onOk: () => {
-      //               // console.log("record",record['_id'],record['key'])
-      //               this.deleteText(record['_id'], record['key']);
-      //               updateTextsData(data.filter((value: any, i: number) => value['key'] !== record['key']))
+      }, {
+        title: '操作',
+        dataIndex: 'kind',
+        render: (label: string, record: { key: string, text: string, label: any, _id:string }, index: number) => (
+          <Space>
+            <Button size='small' type='primary' onClick={
+              () => {
+                const editKey: string = this.state.editKey === record['key'] ? '' : record['key']
+                this.setState({ editKey })
+              }
+            } style={{
+              // float: 'right',
+              marginRight: '10px'
+            }}>
+              {this.state.editKey === record['key'] ? '保存' : '编辑'}
+            </Button>
+            
+            <Button size='small' type='primary' onClick={
+              () => {
+                const { data, updateTextsData } = this.props
+                Modal.confirm({
+                  title: '警告',
+                  icon: <ExclamationCircleOutlined />,
+                  content: '请确认是否要删除改文本',
+                  okText: '确认',
+                  cancelText: '取消',
+                  onOk: () => {
+                    // console.log("record",record['_id'],record['key'])
+                    this.deleteText(record['_id'], record['key']);
+                    updateTextsData(data.filter((value: any, i: number) => value['key'] !== record['key']))
 
-      //               // console.log('object');
-      //               // updateIsSave(false)
-      //             }
-      //           });
-      //         }
-      //       } icon={<DeleteOutlined />} >
-      //         删除
-      //       </Button>
-      //     </React.Fragment>
+                    // console.log('object');
+                    // updateIsSave(false)
+                  }
+                });
+              }
+            } icon={<DeleteOutlined />} >
+              删除
+            </Button>
+          </Space>
 
-      //   ),
-      //   width: '0%',
-      //   align: 'center'
-      // }
+        ),
+        width: '18%',
+        align: 'center'
+      }
     ]
-
     return (
       <div style={{
         width: '100%',
         // height: '475px',
         height:"100%",
-        padding: '0px 2%',
+        padding: '0px 0%',
         backgroundColor: '#fafafa',
         position: 'relative'
       }}>
         <div style={{
           width: '100%',
-          height: '45px',
+          height: '0px',
           padding: '0px',//rgb(255, 255, 255)
           // backgroundColor: 'red'
           // position: 'absolute'
         }}>
-          <Space>
-          <Button type="primary" size='middle' icon={
+          {/* <Button type="primary" size='middle' icon={
             <Icon component={isSave ? SaveIcon : CircleIcon} />
           } style={{
-            // position: 'absolute',
-            // top: 10
+            position: 'absolute',
+            top: 10
           }} onClick={
             () => {
               // this.saveFile(path)
@@ -266,9 +244,9 @@ class TextView extends Component<TextViewProps, TextViewState>{
           <Button type="primary" size='middle' icon={
             <Icon component={isSave ? SaveIcon : CircleIcon} />
           } style={{
-            // position: 'absolute',
-            // top: 10,
-            // left: 110
+            position: 'absolute',
+            top: 10,
+            left: 110
           }} onClick={
             () => {
               const textString:string = data.map(
@@ -291,12 +269,12 @@ class TextView extends Component<TextViewProps, TextViewState>{
               updateTextsData([...data])
             }
           } style={{
-            // position: 'absolute',
-            // top: 10,
-            // left: 200 
+            position: 'absolute',
+            top: 10,
+            left: 200 
           }}>
             增加文本
-          </Button>
+          </Button> */}
           {/* <Button  type='primary' 
               icon={<Icon component={LabelIcon} />}
               onClick={
@@ -321,7 +299,7 @@ class TextView extends Component<TextViewProps, TextViewState>{
             }}>
               标注
             </Button> */}
-            <Button  type='primary' 
+            {/* <Button  type='primary' 
               icon={<Icon component={LabelIcon} />}
               onClick={
                 () => {
@@ -417,138 +395,29 @@ class TextView extends Component<TextViewProps, TextViewState>{
                   
                 }
               } style={{
-                // float:"right"
-                // position: 'absolute',
-                // top: 10,
-                // left: 320
+                position: 'absolute',
+                top: 10,
+                left: 320
             }}>
               初始化
-            </Button>
-
-            <Button type="primary" size='middle' 
-            // icon={
-            //   <Icon component={isSave ? SaveIcon : CircleIcon} />
-            // } 
-            style={{
-              // position: 'absolute',
-              // top: 10
-            }} onClick={
-              () => {
-                // this.saveFile(path)
-                // updateIsSave(true)
-
-                console.log("textView",this.props.data,selectedRowKeys)
-
-                let textsData = this.props.data
-                
-                textsData = textsData.filter((obj:any,index:any) => {
-                  return !selectedRowKeys.includes(obj.key)
-                })
-
-                
-                // console.log("after",textsData)
-
-                const { data, updateTextsData } = this.props
-                for(let i=0;i<selectedRows.length;i++){
-                  // console.log("object"+i,selectedRows[i]['_id'], selectedRows[i]['key'])
-                  this.deleteText(
-                    selectedRows[i]['_id'], selectedRows[i]['key']
-                    )
-                }
-                updateTextsData(textsData)
-                // Modal.confirm({
-                //   title: '警告',
-                //   icon: <ExclamationCircleOutlined />,
-                //   content: '请确认是否要删除改文本',
-                //   okText: '确认',
-                //   cancelText: '取消',
-                //   onOk: () => {
-                //     // console.log("record",record['_id'],record['key'])
-                //     this.deleteText(record['_id'], record['key']);
-                //     updateTextsData(data.filter((value: any, i: number) => value['key'] !== record['key']))
-
-
-                this.setState({ selectedRowKeys: [] , selectedRows: [] })
-              }
-            }>
-              删除
-            </Button>
-
-          <Button type="primary" size='middle' 
-          // icon={
-          //   <Icon component={isSave ? SaveIcon : CircleIcon} />
-          // } 
-          style={{
-            // position: 'absolute',
-            // top: 10
-          }} 
-          onClick={
-            () => {
-              if(selectedRows.length > 1){
-                message.warn('一次只能删除一条数据')
-                this.setState({ selectedRowKeys: [] , selectedRows: [] })
-                return 
-              }
-              if(selectedRows.length === 0){
-                
-                this.setState({
-                  editKey:'',
-                  buttonStateIsEdit:false
-                })
-              }else{
-                  this.setState({
-                  editKey:selectedRows[0]['key'],
-                  buttonStateIsEdit: true
-                })
-              }
-              
-
-
-              this.setState({ selectedRowKeys: [] , selectedRows: [] })
-              // this.saveFile(path)
-              // updateIsSave(true)
-            }
-          }>
-            {
-              !this.state.buttonStateIsEdit ? '编辑' : '保存'
-            }
-          
-          </Button>
-
-          </Space>
-          
+            </Button> */}
         </div>
-        
-
         <Table 
           columns={columns as TableColumnsType<any>}
           dataSource={data} 
-          size='middle'
-          scroll={{ y: 750 }}
-          style={{
-            // innerHeight
-            
-          }}
+          size='small'
+          scroll={{ y: 580 }}
           pagination={{
             pageSize,
             current,
             simple: true,
-            position: ['bottomRight'],
+            position: ['topRight'],
             // showSizeChanger: true,
             onChange: (page: number) => {
               updateTextTablePage(page)
               // this.setState({ pageSize: (pageSize as number) })
             }
           }}
-          rowSelection={{
-						selectedRowKeys,
-						onChange: (selectedRowKeys, selectedRows) => {
-							// console.log("rowChange",selectedRowKeys,selectedRows)
-							this.setState({ selectedRowKeys, selectedRows })
-							// console.log(selectedRowKeys, selectedRows)
-						}
-						
-					}}
         />
           
         

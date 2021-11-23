@@ -13,7 +13,8 @@ import {
     UPDATE_ALL_TEXTS_DATA,
     UPDATE_TRAINTEXT_TABLE_PAGE,
     DELETE_TRAIN_DATA,
-    CHANGE_MENU_SELECTION
+    CHANGE_MENU_SELECTION,
+    CHANGE_CLUSTERINGPLOT_CLASS
 } from '../types/actionTypes'
 import { 
   DictionaryViewStoreType,
@@ -53,7 +54,8 @@ const initStore:StoreType = {
         current: 1
     },
     MenuView:{
-        MenuSelectKey:[]
+        MenuSelectKey:[],
+        classId:'0'
     }
 }
 
@@ -221,6 +223,13 @@ const MenuReducer = (state: MenuStoreType = initStore.MenuView, action: any) => 
             MenuSelectKey:specifyOptions
         }
         // console.log('afterState',afterState)
+        return afterState
+    }else if(action.type === CHANGE_CLUSTERINGPLOT_CLASS){
+        const {classId} = action
+        let afterState = {
+            ...state,
+            classId
+        }
         return afterState
     }
     return state
