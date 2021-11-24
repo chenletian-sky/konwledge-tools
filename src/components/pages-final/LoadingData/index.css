@@ -1,0 +1,40 @@
+.LoadingDict{
+  position: relative;
+  top: 19px;
+  left: 2%;
+  width: 60%;
+  height: 97%;
+  outline: 1px solid;
+}
+.LoadingDict-title{
+  position: relative;
+  top: -10px;
+  display: block;
+  font-weight: normal;
+  width: 80px;
+  font-size: 12px;
+  left: 20px !important;
+  background: white;
+}
+.LoadingDict-table{
+  width: 97%;
+  height: 92%;
+  margin-left: 2%;
+  margin-top: 30px;
+}
+.LoadingDict-table tr,td,th{
+  border: 1px solid #ccc;
+}
+.LoadingDict-table table {
+  border-bottom: 1px solid #ccc;
+}
+.LoadingDict-head{
+  margin-left: 2%;
+  width: 100%;
+  height: 1%;
+}
+.LoadingDict-show-data{
+  outline: 1px solid ;
+  float: left;
+  width: 100%;
+}

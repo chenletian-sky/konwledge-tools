@@ -156,7 +156,7 @@ export default class WordsCloud extends Component<Props, State> {
         if (myCharts != null && myCharts !== "" && myCharts !== undefined) {
             myCharts.dispose();//销毁
         }
-        // if(this.props.isComplete)
+        if(this.props.isComplete)
             this.createWordCloud();
         
     }

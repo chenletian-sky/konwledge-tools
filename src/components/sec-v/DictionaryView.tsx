@@ -135,11 +135,11 @@ class DictionaryView extends Component<
         <Table
           dataSource={tableData}
           size="small"
-          scroll={{ 
-            y:800,
-            // x:"max-content"
-            x:1000 
-          }}
+          // scroll={{ 
+          //   y:800,
+          //   // x:"max-content"
+          //   x:1000 
+          // }}
           pagination={{
             pageSize,
             position: ["topRight"],

@@ -1,0 +1,85 @@
+.ModelDisposition{
+  outline: 1px solid;
+  position: relative;
+  left: 10%;
+  top: 20px;
+  width: 70%;
+  height: 95%;
+  margin: none;
+}
+.ModelDisposition-title{
+  position: relative;
+  top: -10px;
+  display: block;
+  font-weight: normal;
+  width: 80px;
+  font-size: 12px;
+  left: 20px !important;
+  background: white;
+}
+.ModelDisposition-control{
+  position: relative;
+  width: 60%;
+  margin: none;
+  left: -9%;
+}
+.ModelDisposition input{
+  width: 85%;
+  height: 100%;
+  border: 1px solid ;
+}
+.ModelDisposition-select-content {
+  width: 65%;
+  height: 15%;
+  position: relative;
+  left: 1%;
+  margin-top: 10px;
+  /* outline: 1px solid; */
+}
+.ModelDisposition-Row{
+  margin-top: 3%;
+}
+.ModelDisposition-fig{
+  float: right;
+  position: relative;
+  top: -6%;
+  margin-right: 1%;
+  outline: 1px solid;
+  width: 33%;
+  height: 23.5%
+}
+.ModelDisposition-per-bef{
+  height: 75%;
+  width: 98%;
+  margin-top: 1%;
+  position: relative;
+  left: 1%;
+  /* outline: 1px solid; */
+}
+.ModelDisposition-per{
+  height: 98%;
+  width: 49%;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  top: 1%;
+  outline: 1px solid;
+}
+.ModelDisposition-bef{
+  height: 98%;
+  width: 49%;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  float: right;
+  position: relative;
+  top: -97%;
+  outline: 1px solid;
+}
+.ModelDisposition-his-title{
+  position: relative;
+  float: left;
+  left: 4%;
+  top: 2%;
+  font-weight: 1000;
+}

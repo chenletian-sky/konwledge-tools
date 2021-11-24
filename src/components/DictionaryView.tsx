@@ -47,7 +47,7 @@ class DictionaryView extends Component<
   public constructor(props: DictionaryViewProps) {
     super(props);
     this.state = {
-      pageSize: 12,
+      pageSize: 10,
       tableData: [],
       inputNameByShow: "",
       inputVisibleName: "",
@@ -79,7 +79,7 @@ class DictionaryView extends Component<
         <Table
           dataSource={tableData}
           size="middle"
-          scroll={{ y: 780 }}
+          // scroll={{ y: 780 }}
           pagination={{
             pageSize,
             position: ["bottomRight"],
@@ -246,9 +246,9 @@ class DictionaryView extends Component<
             key="action"
             render={(name: any, r: any, i: number) => {
               return (
-                <Button
-                  size="small"
-                  type="primary"
+                <a
+                  // size="small"
+                  // type="primary"
                   onClick={() => {
                     Modal.confirm({
                       title: "警告",
@@ -265,10 +265,10 @@ class DictionaryView extends Component<
                       },
                     });
                   }}
-                  icon={<DeleteOutlined />}
+                  // icon={<DeleteOutlined />}
                 >
                   删除
-                </Button>
+                </a>
               );
             }}
           />
@@ -331,6 +331,7 @@ class DictionaryView extends Component<
 
   public componentDidMount() {
     //
+    console.log('dictionaryView',this.props.tableData)
   }
 
   private updateDictionary (dictionary:{

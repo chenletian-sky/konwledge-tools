@@ -6,8 +6,8 @@ import {
 } from 'react-router-dom'
 import './App.css'
 import LoginView from './components/LoginView';
-import Main from './components/Main';
-// import Main from './components/Main'
+// import Main from './components/Main';
+import Main from './components/Main-final'
 
 
 interface AppProps {

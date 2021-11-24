@@ -418,7 +418,7 @@ class MarkView extends Component<MarkViewProps, MarkViewState>{
 				</div>
 				
 				<Table columns={this.columns} dataSource={data} size='small' 
-					scroll={{ y: 450 }}
+					// scroll={{ y: 450 }}
 					pagination={{
 						pageSize: 10,
 						current,

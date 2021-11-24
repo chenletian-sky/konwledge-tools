@@ -1,0 +1,55 @@
+.Dialog{
+    margin-left: 2px;
+    margin-top: 19px;
+    
+}
+.Outer{
+    /* margin: 0 auto;*/
+    position: static;
+    margin-left: 40px;
+    width: 415px;
+    height: 780px;
+    margin-top: 16px;
+    outline: 1px solid ;
+
+}
+.flow-svg{
+    position: absolute;
+    left: 42px;
+    width: 415px;
+    top: 70px;
+    height: 80%; 
+    /* outline: 1px solid red; */
+}
+.flow-title{
+    position: relative;
+    top: -10px;
+    display: block;
+    font-weight: normal;
+    width: 50px;
+    font-size: 12px;
+    left: 20px !important;
+    background: white;
+}
+.flow-btn{
+    width: 145px;
+    height: 45px;
+    background-color: rgb(204,204,204);
+    margin: 0;
+    border-radius: 5px;
+}
+.Outer div{
+    margin: none;
+    margin: 0 auto;
+    margin-top: 15%;
+    position: relative;
+    top: -30px;
+    border: none;
+    width: 120px;
+    /* outline: 1px solid; */
+}
+#flow-flag{
+    -webkit-writing-mode: vertical-rl;
+    writing-mode: vertical-rl;
+    letter-spacing: 5px;
+}

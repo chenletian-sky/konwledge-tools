@@ -219,7 +219,7 @@ class TrainView extends Component <TrainViewProps, TrainViewState>{
         return (
           <div style={{
             width: '100%',
-            height: '500px',
+            height: '450px',
             // backgroundColor: 'red'
             // borderBottom: '1px solid black'
           }}>
@@ -422,7 +422,7 @@ class TrainView extends Component <TrainViewProps, TrainViewState>{
               
             </div>
             <Table columns={this.columns} dataSource={data} size='small' 
-              scroll={{ y: 450 }}
+              // scroll={{ y: 400 }}
               pagination={{
                 pageSize: 10,
                 current,

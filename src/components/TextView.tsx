@@ -38,7 +38,7 @@ class TextView extends Component<TextViewProps, TextViewState>{
     super(props)
     this.state = {
       editKey: '',
-      pageSize: 12,
+      pageSize: 10,
       searchText:'',
       searchedColumn:'',
       selectedRowKeys: [],
@@ -524,7 +524,7 @@ class TextView extends Component<TextViewProps, TextViewState>{
           columns={columns as TableColumnsType<any>}
           dataSource={data} 
           size='middle'
-          scroll={{ y: 750 }}
+          // scroll={{ y: 750 }}
           style={{
             // innerHeight
             

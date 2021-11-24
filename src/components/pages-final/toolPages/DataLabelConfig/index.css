@@ -1,0 +1,63 @@
+.YuLiaoPeiZhi{
+  outline: 1px solid;
+  margin: 0 auto;
+  margin-top: 20px;
+  /* width: 60%; */
+  height: 650px;
+}
+.YuLiaoPeiZhi-title{
+  position: relative;
+  top: -10px;
+  display: block;
+  font-weight: normal;
+  width: 80px;
+  font-size: 12px;
+  left: 20px !important;
+  background: white;
+}
+.YuLiaoPeiZhi-text{
+  font-size: 12px;
+}
+.YuLiaoPeiZhi-Head{
+  /* outline: 1px solid; */
+  margin-left: 5%;
+  width: 80%;
+  height: 7%;
+  /* line-height: 200px; */
+}
+.YuLiaoPeiZhi-input{
+  margin: none;
+  border: 1px solid #ccc;
+  width: 20%;
+}
+.YuLiaoPeiZhi-Head span,input,button,select{
+  position: relative;
+  left: -10%;
+  top: 20%;
+}
+.YuLiaoPeiZhi-button{
+  width: 70px;
+  border-radius: 3px;
+  color: white;
+}
+.YuLiaoPeiZhi-table{
+  width: 90%;
+  margin-left: 5%;
+  margin-top: 10px;
+}
+.YuLiaoPeiZhi-table table,tr,li,td,th{
+  border: 1px solid #ccc;
+}
+.YuLiaoPeiZhi-table button{
+  border: none;
+  margin: none;
+  background: white;
+  color: rgb(66, 66, 228);
+}
+.YuLiaoPeiZhi-content{
+  outline: 1px solid;
+  width: 90%;
+  height: 60%;
+  margin-left: 5%;
+  margin-top: 2%;
+}

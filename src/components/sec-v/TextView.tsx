@@ -406,7 +406,7 @@ class TextView extends Component<TextViewProps, TextViewState>{
           columns={columns as TableColumnsType<any>}
           dataSource={data} 
           size='small'
-          scroll={{ y: 580 }}
+          // scroll={{ y: 580 }}
           pagination={{
             pageSize,
             current,

@@ -110,7 +110,7 @@ export const importIcon =  (props:any) => (
  */
 export const Logo = (props:any) => (
 <svg viewBox="0 0 1024 1024" 
-width="1em" height="1em"
+width="2em" height="2em"
 >  
 	<image id="image0" 
 	width="100%" height="100%" 
