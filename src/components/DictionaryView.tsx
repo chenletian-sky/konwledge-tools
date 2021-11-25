@@ -280,6 +280,7 @@ class DictionaryView extends Component<
           style={{
             position: "absolute",
             top: 10,
+            backgroundColor: 'rgb(0,68,107)', border: 'rgb(0,68,107)'
           }}
           onClick={() => {
             /* original data */
@@ -321,6 +322,7 @@ class DictionaryView extends Component<
             position: "absolute",
             top: 10,
             left: 120,
+            backgroundColor: 'rgb(0,68,107)', border: 'rgb(0,68,107)'
           }}
         >
           增加字典

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Button, Select, Input, Slider, InputNumber, Row, Col, Table } from 'antd';
+import { Button, Select, Input, Slider, InputNumber, Row, Col, Table, message } from 'antd';
 import ClusteringPlot from '../../ClusteringPlot';
 import WordsCloud from '../../WordCloud/yu';
 import { Redirect, Route , Switch} from 'react-router-dom';
@@ -98,109 +98,122 @@ class DataClassfication extends Component <DataClassficationProps, DataClas
             },
           ];
 
-          return <div style={{ width: '100%', height: '100%' }}>
-            <div style={topStyle as React.CSSProperties}>
-              <div style={pmethodstyle as React.CSSProperties}>
-                <div style={{ float: 'left', width: '12%' }}>向量化方法</div>
-                <Select defaultValue="doc2vec" style={{ width: '12%', marginTop: '0%', float: 'left' }}>
+          return <div
+              style={{
+                height: "97.6%",
+                width: "100%",
+                border: "1px solid black",
+                // margin:"10px 10px 10px 10px",
+                padding: "10px 10px 10px 10px"
+              }}
+            >
+
+              <span
+                style={{
+                  position: 'relative',
+                  top: "-24px",
+                  zIndex: 99,
+                  backgroundColor: "white",
+                  fontSize: "20px"
+                }}
+              >数据预处理</span>
+              <div style={{
+                marginTop: '-1%',
+                marginLeft: '2%',
+                width: '100%',
+                height: '1%',
+                float: 'left',
+              }}>
+                <div style={{ float: 'left', width: '12%', marginTop: '0.5%' }}>向量化方法</div>
+                <Select defaultValue="doc2vec" style={{ width: '12%', float: 'left' }}>
                   <Option value="doc2vec">doc2vec</Option>
                   <Option value="2017">2017</Option>
                 </Select>
-                <div style={{ float: 'left', width: '10%', marginLeft: '3%' }}>向量化参数</div>
-                <div style={boxStyle as React.CSSProperties}>
-                  <div style={smalltitleStyle as React.CSSProperties}>min_count</div>
-                  <Input style={InputStyle as React.CSSProperties}></Input>
-                </div>
-                <div style={boxStyle as React.CSSProperties}>
-                  <div style={smalltitleStyle as React.CSSProperties}>size</div>
-                  <Input style={InputStyle}></Input>
-                </div>
-                <Button type="primary" style={buttonStyle}>向量化</Button>
+                <div style={{ float: 'left', width: '8%', marginLeft: '5%', marginTop: '0.5%' }}>向量化参数</div>
+                <div style={{ float: 'left', width: '8%', marginLeft: '2%', marginTop: '0.5%' }}>min_count</div>
+                <Input style={{ width: '10%', float: 'left' }}></Input>
+                <div style={{ float: 'left', width: '8%', marginLeft: '2%', marginTop: '0.5%' }}>size</div>
+                <Input style={{ width: '10%', float: 'left' }}></Input>
+                <Button style={{ marginLeft: '5%', borderRadius: '5px', width: '80px', backgroundColor: 'rgb(0,68,107)', border: 'rgb(0,68,107)', color: 'white' }}>向量化</Button>
               </div>
-              <div style={cmethodstyle as React.CSSProperties}>
-                <div style={titleStyle as React.CSSProperties}>聚类方法</div>
-                <Select defaultValue="doc2vec" style={{ width: '12%', marginTop: '0%', float: 'left' }}>
+
+              <div style={{
+                marginTop: '2%',
+                marginLeft: '2%',
+                width: '100%',
+                height: '1%',
+                float: 'left',
+
+              }}>
+                <div style={{ float: 'left', width: '12%', marginTop: '0.5%' }}>聚类方法</div>
+                <Select defaultValue="doc2vec" style={{ width: '12%', float: 'left' }}>
                   <Option value="doc2vec">Kmeans</Option>
                   <Option value="2017">2017</Option>
                 </Select>
-                <div style={{ float: 'left', width: '10%', marginLeft: '3%' }}>聚类参数</div>
-                <div style={boxStyle as React.CSSProperties}>
-                  <div style={smalltitleStyle as React.CSSProperties}>n_sample</div>
-                  <Input style={InputStyle}></Input>
-                </div>
-                <div style={boxStyle as React.CSSProperties}>
-                  <div style={smalltitleStyle as React.CSSProperties}>n_feature</div>
-                  <Input style={InputStyle}></Input>
-                </div>
-                <Button type="primary" style={buttonStyle}>聚类</Button>
+                <div style={{ float: 'left', width: '8%', marginLeft: '5%', marginTop: '0.5%' }}>聚类参数</div>
+                <div style={{ float: 'left', width: '8%', marginLeft: '2%', marginTop: '0.5%' }}>n_sample</div>
+                <Input style={{ width: '10%', float: 'left' }}></Input>
+                <div style={{ float: 'left', width: '8%', marginLeft: '2%', marginTop: '0.5%' }}>n_feature</div>
+                <Input style={{ width: '10%', float: 'left' }}></Input>
+                <Button style={{ marginLeft: '5%', borderRadius: '5px', width: '80px', backgroundColor: 'rgb(0,68,107)', border: 'rgb(0,68,107)', color: 'white' }}>聚类</Button>
               </div>
-              <div style={sampleStyle as React.CSSProperties}>
-                <div style={titleStyle as React.CSSProperties}>采样频率</div>
-                <div style={{ width: "88%", height: '100%', float: 'left', marginLeft: '12%', marginTop: '-2.5%' }}>
-                  <Slider
-                    min={1}
-                    max={100}
-                    onChange={this.onChange}
-                    value={typeof inputValue === 'number' ? inputValue : 0} style={{ width: '59%', float: 'left' }} />
-                  <InputNumber
-                    min={"1"}
-                    max={"100"}
-                    style={{ margin: '0 40px', width: '11%', marginRight: '7.5%' }}
-                    value={inputValue + '%'}
-                    onChange={this.onChange}
-                  />
 
-                  <Button type="primary" style={buttonStyle}
-                    onClick={() => {
-                      console.log("inputValue",this.state.inputValue)
-                      axios.post(`${PATH}/api/init_vec`,{withCredentials: true}).then((res:AxiosResponse<any,any>) => {
-                        if(res.data.status === 200 ){
-                          console.log("success dec2Vec")
-                        }
-                      })
-                    }}
-                  >采样</Button>
-                </div>
+              <div style={{
+                marginTop: '2.5%',
+                marginLeft: '2%',
+                width: '100%',
+                height: '1%',
+                float: 'left',
 
+              }}>
+                <div style={{ float: 'left', width: '12%', marginTop: '0.5%' }}>采样频率</div>
+                <Slider
+                  min={1}
+                  max={100}
+                  onChange={this.onChange}
+                  value={typeof inputValue === 'number' ? inputValue : 0} style={{ width: '50%', float: 'left' }} />
+                <InputNumber
+                  min={"1"}
+                  max={"100"}
+                  style={{ margin: '0 48px', width: '10%', marginRight: '0%' }}
+                  value={inputValue + '%'}
+                  onChange={this.onChange}
+                />
+
+                <Button style={{ marginLeft: '5%', borderRadius: '5px', width: '80px', backgroundColor: 'rgb(0,68,107)', border: 'rgb(0,68,107)', color: 'white' }}
+                  onClick={()=>{
+                    axios.post(`${PATH}/api/init_vec`,{withCredentials:true}).then((res:AxiosResponse<any,any>) =>{
+                      if(res.data.status === 200 ){
+                        message.success('初始化成功')
+                      }
+                    })
+                  }}
+                >采样</Button>
               </div>
-              <div style={{ width: '12%', float: 'left', marginLeft: '5%' }}>已加载字典</div>
+              <div style={{ width: '12%', float: 'left', marginLeft: '2%', marginTop: '2.5%' }}>已加载字典</div>
               <Table dataSource={dataSource} columns={columns} style={{ marginLeft: '5%', marginRight: '5%', marginTop: '2%' }} pagination={false} />
-              <Button type="primary" style={{ borderRadius: '5px', marginLeft: '5%', marginRight: '1%', marginTop: '1%', width: '100px', backgroundColor: '#066094', border: '1px solid #066094', float: 'right' }}>导出</Button>
-            </div>
-
-            <Button style={{ width: '120px', borderRadius: '5px', marginLeft: '1%' }}
-              onClick={()=>{
-                this.props.history.push('/index/tool/dataClassfication/dataVisual')
-              }}
-            >可视化panel</Button>
-            <Button style={{ width: '120px', borderRadius: '5px' }}
-              onClick={()=>{
-                this.props.history.push('/index/tool/dataClassfication/rawText')
-              }}
-            >数据结果</Button>
-            <Button style={{ width: '120px', borderRadius: '5px' }}
-              onClick={()=>{
-                this.props.history.push('/index/tool/dataClassfication/afterMatchText')
-              }}
-            >字典匹配</Button>
-            
-
-            <Switch>
-              <Route path='/index/tool/dataClassfication/dataVisual' component={DataVisual}></Route>
-              <Route path='/index/tool/dataClassfication/rawText' component={RawText}></Route>
-              <Route path='/index/tool/dataClassfication/afterMatchText' component={AfterMatchText}></Route>
-              <Redirect to='/index/tool/dataClassfication/dataVisual'></Redirect>
-            </Switch>
-            {/* <div style={{ width: '98%', height: '50%', float: 'left', marginTop: '0%', marginLeft: '1%' }}>
-              <div style={{ width: '50%', height: '100%', float: 'left', border: '1px solid gray' }}>
-                <ClusteringPlot history={undefined} />
-              </div>
-              <div style={{ width: '50%', height: '100%', float: 'left', border: '1px solid gray' }}>
-              <WordsCloud isComplete={true} wordCloudClass={'3'} />
-              </div>
-            </div> */}
-          
-          </div>
+              <Button style={{ width: '120px', borderRadius: '5px', marginLeft: '1%' }}
+                onClick={() => {
+                  this.props.history.push('/index/tool/dataClassfication/dataVisual')
+                }}
+              >可视化</Button>
+              <Button style={{ width: '120px', borderRadius: '5px' }}
+                onClick={() => {
+                  this.props.history.push('/index/tool/dataClassfication/rawText')
+                }}
+              >数据结果</Button>
+              <Button style={{ width: '120px', borderRadius: '5px', marginTop: '1%' }}
+                onClick={() => {
+                  this.props.history.push('/index/tool/dataClassfication/afterMatchText')
+                }}
+              >字典匹配</Button>
+              <Switch>
+                <Route path='/index/tool/dataClassfication/dataVisual' component={DataVisual}></Route>
+                <Route path='/index/tool/dataClassfication/rawText' component={RawText}></Route>
+                <Route path='/index/tool/dataClassfication/afterMatchText' component={AfterMatchText}></Route>
+                <Redirect to='/index/tool/dataClassfication/dataVisual'></Redirect>
+              </Switch>
+            </div >
     }
 }
 export default DataClassfication;

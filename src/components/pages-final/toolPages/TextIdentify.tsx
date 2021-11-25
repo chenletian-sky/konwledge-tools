@@ -34,9 +34,14 @@ class TextIdentify extends Component <TextIdentifyProps, TextIdentifyState>
               </div>
               <div style={boxStyle as React.CSSProperties}>
                 <div style={titleStyle as React.CSSProperties}>语料数据</div>
-                <div style={{ fontSize: '1em', fontWeight: 'bold', float: 'left' }}>
+                <Input style={{ 
+                  position:"relative",
+                  left:"-850px",
+                  width: '15%' 
+                  }}></Input>
+                {/* <div style={{ fontSize: '1em', fontWeight: 'bold', float: 'left' }}>
                   <h1>厂语料数据</h1>
-                </div>
+                </div> */}
                 <div style={{ marginLeft: '20%', float: 'left', width: '50%', marginTop: '1%' }}>
                   <Button style={buttonStyle}>采样</Button>
                   <Button style={buttonStyle}>识别</Button>

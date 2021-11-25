@@ -255,6 +255,7 @@ class TextView extends Component<TextViewProps, TextViewState>{
           } style={{
             // position: 'absolute',
             // top: 10
+            backgroundColor: 'rgb(0,68,107)', border: 'rgb(0,68,107)'
           }} onClick={
             () => {
               // this.saveFile(path)
@@ -269,6 +270,7 @@ class TextView extends Component<TextViewProps, TextViewState>{
             // position: 'absolute',
             // top: 10,
             // left: 110
+            backgroundColor: 'rgb(0,68,107)', border: 'rgb(0,68,107)'
           }} onClick={
             () => {
               const textString:string = data.map(
@@ -294,6 +296,7 @@ class TextView extends Component<TextViewProps, TextViewState>{
             // position: 'absolute',
             // top: 10,
             // left: 200 
+            backgroundColor: 'rgb(0,68,107)', border: 'rgb(0,68,107)'
           }}>
             增加文本
           </Button>
@@ -351,7 +354,12 @@ class TextView extends Component<TextViewProps, TextViewState>{
                                 if (response['status'] === 200 && response['message'] === '获取成功') {
                                   // console.log("before",response.data)
                                   
-                                  const fileData = response.data
+                                  let fileData = response.data
+
+                                  
+
+                                  // const fileData = xxdata[0]
+                                  // console.log("file",fileData)
                                   
                                   const after =  fileData.map((value:InitMarkText, i: string)=>{
                                     let returnValue = {
@@ -421,6 +429,7 @@ class TextView extends Component<TextViewProps, TextViewState>{
                 // position: 'absolute',
                 // top: 10,
                 // left: 320
+                backgroundColor: 'rgb(0,68,107)', border: 'rgb(0,68,107)'
             }}>
               初始化
             </Button>
@@ -432,6 +441,7 @@ class TextView extends Component<TextViewProps, TextViewState>{
             style={{
               // position: 'absolute',
               // top: 10
+              backgroundColor: 'rgb(0,68,107)', border: 'rgb(0,68,107)'
             }} onClick={
               () => {
                 // this.saveFile(path)
@@ -481,6 +491,7 @@ class TextView extends Component<TextViewProps, TextViewState>{
           style={{
             // position: 'absolute',
             // top: 10
+            backgroundColor: 'rgb(0,68,107)', border: 'rgb(0,68,107)'
           }} 
           onClick={
             () => {

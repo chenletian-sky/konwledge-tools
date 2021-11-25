@@ -250,24 +250,24 @@ class Main extends Component<MainProps, MainState>{
             {dom}
           </a>
         )}
-        headerRender= {(props:HeaderViewProps)=>{
-            return (<div
-              style={{
-                height:"50px",
-                backgroundColor:"#00446B"
-                // backgroundColor:"red"
-                
-              }}
-            >
-              &nbsp;
-              <Avatar size='large' icon={<UserOutlined />} style={{
-                float: 'right',
-                marginTop: '4px',
-                // marginRight: '15px'
-                // marginTop: '-47px',
-                // marginRight: '15px'
-              }}/>
-            </div>)
+        headerRender={(props: HeaderViewProps) => {
+          return (<div
+            style={{
+              height: "50px",
+              backgroundColor: "#00446B"
+              // backgroundColor:"red"
+
+            }}
+          >
+            &nbsp;
+            <Avatar size='large' icon={<Logo />} style={{
+              float: 'right',
+              marginTop: '4px',
+              marginRight: '10px'
+              // marginTop: '-47px',
+              // marginRight: '15px'
+            }} />
+          </div>)
         }}
         headerContentRender={(props: BasicLayoutProps) => {
           return <div
@@ -351,7 +351,8 @@ class Main extends Component<MainProps, MainState>{
             <div
               style={{
                 height:"50px",
-                backgroundColor:"rgb(0, 68, 107)"
+                // backgroundColor:"rgb(0, 68, 107)"
+                background: '#2188E2'
               }}
             >
               {/* hello */}
