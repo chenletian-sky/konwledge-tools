@@ -1,58 +1,59 @@
 import DownOutlined from '@ant-design/icons/lib/icons/DownOutlined';
 import ProCard from '@ant-design/pro-card';
-import { Button, Col, Dropdown, Menu, Row, Select, Space, Table } from 'antd';
-import React, {Component} from 'react';
+import { Button, Col, Dropdown, Menu, Row, Select, Space, Table, Input } from 'antd';
+import React, { Component } from 'react';
 import TextView from '../../TextView';
 import './DictMatchConfig.css'
 
-const {Option} = Select
+const { Option } = Select
 
-interface DictMatchConfigProps {
-
-}
-interface DictMatchConfigState {
+interface DictMatchConfigProps {
 
 }
-class DictMatchConfig extends Component <DictMatchConfigProps, DictMatchConfigState>{
-    public constructor(props : DictMatchConfigProps) {
-        super(props)
-    }
+interface DictMatchConfigState {
 
-    public render() : JSX.Element {
-        
-        return (
-              <div
-                style={{
-                  height:"100%",
-                  width:"100%",
-                  border:"1px solid black",
-                  // margin:"10px 10px 10px 10px",
-                  padding:"10px 10px 10px 10px"
-                }}
-              >
-                
-                  <span
-                  style={{
-                    position:'relative',
-                    top:"-20px",
-                    zIndex:99,
-                    backgroundColor:"white"
-                  }}
-                >训练模型配置</span>
+}
+class DictMatchConfig extends Component<DictMatchConfigProps, DictMatchConfigState>{
+  public constructor(props: DictMatchConfigProps) {
+    super(props)
+  }
 
-                <ProCard
-                  split='horizontal'
-                  bordered
-                  headerBordered
-                  style={{
-                    // height:"100%",
-                    width:"100%"
-                  }}
-                >
-                  <ProCard
-                    // title="已加载数据"
-                  >
-                    {/* <div className='ModelDisposition-control'>
+  public render(): JSX.Element {
+
+    return (
+      <div
+        style={{
+          height: "97.6%",
+          width: "100%",
+          border: "1px solid black",
+          // margin:"10px 10px 10px 10px",
+          padding: "10px 10px 10px 10px"
+        }}
+      >
+
+        <span
+          style={{
+            position: 'relative',
+            top: "-24px",
+            zIndex: 99,
+            backgroundColor: "white",
+            fontSize: "20px"
+          }}
+        >训练模型配置</span>
+
+        <ProCard
+          split='horizontal'
+          bordered
+          headerBordered
+          style={{
+            // height:"100%",
+            width: "100%"
+          }}
+        >
+          <ProCard
+          // title="已加载数据"
+          >
+            {/* <div className='ModelDisposition-control'>
                         <span>模型</span>
                         <select className="ModelDisposition-select" defaultValue="BiLSTM" style={{ width: '25%',marginLeft:"7%" }} onChange={function handleChange(value) {console.log(`selected ${value}`);}}>
                             <option value="CNN">BiLSTM</option>
@@ -63,103 +64,123 @@ class DictMatchConfig extends Component <DictMatchConfigProps, DictMatchCon
                         <div className="ModelDisposition-fig">
                             <span id="ModelDisposition-little-title2" style={{float: 'left',marginLeft:"4%"}}>模型评价指标</span>
                         </div> */}
-                    <div>
-                      
-                      
-                    </div>
-                    <div className="ModelDisposition-select-content">
-                        <Row >
-                          <Col span={3}>
-                            <p>模型</p>
-                          </Col>
+            <div>
 
-                          <Col span={4} >
-                          <Select defaultValue="BiLSTM" style={{ width: 120 }} 
-                            // onChange={handleChange}
-                            // size="small"
-                            dropdownStyle={{
-                              width:"100px"
-                            }}
-                          >
-                            <Option value="BiLSTM">BiLSTM</Option>
-                            <Option value="BERT">BERT</Option>
-                            
-                          </Select>
-                          </Col>
 
-                          <Col
-                            // span={4}
-                          >
-                            <Button
-                              type="primary"
-                              size="small"
-                              style={{
-                                position:"relative",
-                                top:"5px"
-                              }}
-                            >
-                              训练
-                            </Button>
-                          </Col>
-                         
-                          {/* <select name="" id=""></select> */}
-                          
-                        </Row>
-                        <Row justify="start">
-                            <Col span={3}><span id="ModelDisposition-little-title1">模型参数</span></Col>
-                            <Col span={4}><span>迭代次数</span></Col>
-                            <Col span={6}><input className="ModelDisposition-input" type="text"></input></Col>
-                            <Col span={5}><span>权重保存路径</span></Col>
-                            <Col span={6}><input className="ModelDisposition-input" type="text"></input></Col>
-                        </Row>
-                        <Row justify="start" className="ModelDisposition-Row">
-                            <Col span={3}></Col>
-                            <Col span={4}><span>输入维度</span></Col>
-                            <Col span={6}><input className="ModelDisposition-input" type="text"></input></Col>
-                            <Col span={5}><span>网络层数</span></Col>
-                            <Col span={6}><input className="ModelDisposition-input" type="text"></input></Col>
-                        </Row>
-                        <Row justify="start" className="ModelDisposition-Row">
-                            <Col span={3}></Col>
-                            <Col span={4}><span>隐含层维度</span></Col>
-                            <Col span={6}><input className="ModelDisposition-input" type="text"></input></Col>
-                            <Col span={5}><span>输出维度</span></Col>
-                            <Col span={6}><input className="ModelDisposition-input" type="text"></input></Col>
-                        </Row>
-                    </div>
-                    
-                  </ProCard>
+            </div>
+            <div className="ModelDisposition-select-content">
+              <Row >
+                <Col span={3}>
+                  <p>模型</p>
+                </Col>
 
-                  <ProCard
-                    // title="匹配查看"
-                    split="vertical"
-                    bordered
-                    headerBordered
-                    style={{
-                      // height:"10%",
-                      // width:"100%"
+                <Col span={4} >
+                  <Select defaultValue="BiLSTM" style={{ width: 120 }}
+                    // onChange={handleChange}
+                    // size="small"
+                    dropdownStyle={{
+                      width: "100px"
                     }}
                   >
-                    <ProCard
-                      colSpan="50%"
-                    >
-                       <TextView></TextView>
-                    </ProCard>
-                    <ProCard>
-                       <TextView></TextView>
-                    </ProCard>
-                   
-                    
-                  </ProCard>
+                    <Option value="BiLSTM">BiLSTM</Option>
+                    <Option value="BERT">BERT</Option>
 
-                </ProCard>
-                  
-                
-              </div>
-        )
-    }
+                  </Select>
+                </Col>
+
+                <Col
+                // span={4}
+                >
+                  <Button
+                    type="primary"
+                    // size="small"
+                    style={{
+                      position: "relative",
+                      // top: "5px",
+                      width: '80px',
+                      backgroundColor: 'rgb(0,68,107)', border: 'rgb(0,68,107)', color: 'white'
+                    }}
+                  >
+                    训练
+                  </Button>
+                </Col>
+
+                {/* <select name="" id=""></select> */}
+
+              </Row>
+              <Row justify="start">
+                <Col span={3}><span id="ModelDisposition-little-title1">模型参数</span></Col>
+                <Col span={4}><span>迭代次数</span></Col>
+                <Col span={6}>
+                  <Input style={{ width: '80%' }}></Input>
+                  {/* <input className="ModelDisposition-input" type="text"></input> */}
+                </Col>
+                <Col span={5}><span>权重保存路径</span></Col>
+                <Col span={6}>
+                  <Input style={{ width: '80%' }}></Input>
+                  {/* <input className="ModelDisposition-input" type="text"></input> */}
+                </Col>
+              </Row>
+              <Row justify="start" className="ModelDisposition-Row">
+                <Col span={3}></Col>
+                <Col span={4}><span>输入维度</span></Col>
+                <Col span={6}>
+                  <Input style={{ width: '80%' }}></Input>
+                  {/* <input className="ModelDisposition-input" type="text"></input> */}
+                </Col>
+                <Col span={5}><span>网络层数</span></Col>
+                <Col span={6}>
+                  <Input style={{ width: '80%' }}></Input>
+                  {/* <input className="ModelDisposition-input" type="text"></input> */}
+                </Col>
+              </Row>
+              <Row justify="start" className="ModelDisposition-Row">
+                <Col span={3}></Col>
+                <Col span={4}><span>隐含层维度</span></Col>
+                <Col span={6}>
+                  <Input style={{ width: '80%' }}></Input>
+                  {/* <input className="ModelDisposition-input" type="text"></input> */}
+                </Col>
+                <Col span={5}><span>输出维度</span></Col>
+                <Col span={6}>
+                  <Input style={{ width: '80%' }}></Input>
+                  {/* <input className="ModelDisposition-input" type="text"></input> */}
+                </Col>
+              </Row>
+            </div>
+
+          </ProCard>
+
+          <ProCard
+            // title="匹配查看"
+            split="vertical"
+            bordered
+            headerBordered
+            style={{
+              // height:"10%",
+              // width:"100%"
+            }}
+          >
+            <ProCard
+              colSpan="50%"
+            >
+              <TextView></TextView>
+            </ProCard>
+            <ProCard>
+              <TextView></TextView>
+            </ProCard>
+
+
+          </ProCard>
+
+        </ProCard>
+
+
+      </div>
+    )
+  }
 }
-export default DictMatchConfig;
+export default DictMatchConfig;
 
 
 

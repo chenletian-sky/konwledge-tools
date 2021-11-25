@@ -104,7 +104,7 @@ class DictionaryView extends Component<
               return inputNameByShow !== name ? (
                 <div
                   style={{
-                    fontSize:"20px"
+                    fontSize: "20px"
                   }}
                   onMouseEnter={() => {
                     this.setState({ inputNameByShow: name }, () => {
@@ -131,7 +131,7 @@ class DictionaryView extends Component<
                       tableData[i]["name"] = e.target.value;
                       updateDictionaryData(tableData);
                       modifyLabelOfDictionaryData(label, tableData);
-                      this.updateDictionary({...r, name: e.target.value});
+                      this.updateDictionary({ ...r, name: e.target.value });
                       // this.setState({ tableData })
                     }
                   }
@@ -143,7 +143,7 @@ class DictionaryView extends Component<
                       tableData[i]["name"] = (e.target as any).value;
                       updateDictionaryData(tableData);
                       modifyLabelOfDictionaryData(label, tableData);
-                      this.updateDictionary({...r, name: (e.target as any).value});
+                      this.updateDictionary({ ...r, name: (e.target as any).value });
                       // this.setState({ tableData })
                     }
                   }
@@ -184,7 +184,7 @@ class DictionaryView extends Component<
                       tableData[i]["abbreviations"] = [...newNames];
                       updateDictionaryData([...tableData]);
                       modifyLabelOfDictionaryData(label, [...tableData]);
-                      this.updateDictionary({...record, abbreviations: [...newNames]})
+                      this.updateDictionary({ ...record, abbreviations: [...newNames] })
                       // this.setState({ tableData })
                     }}
                   >
@@ -208,7 +208,7 @@ class DictionaryView extends Component<
                       );
                       updateDictionaryData(tableData);
                       modifyLabelOfDictionaryData(label, [...tableData]);
-                      this.updateDictionary({...record})
+                      this.updateDictionary({ ...record })
                       // this.setState({ tableData })
                     }}
                     onPressEnter={(e) => {
@@ -219,7 +219,7 @@ class DictionaryView extends Component<
                       );
                       updateDictionaryData(tableData);
                       modifyLabelOfDictionaryData(label, [...tableData]);
-                      this.updateDictionary({...record})
+                      this.updateDictionary({ ...record })
 
                       // this.setState({ tableData })
                     }}
@@ -265,7 +265,7 @@ class DictionaryView extends Component<
                       },
                     });
                   }}
-                  // icon={<DeleteOutlined />}
+                // icon={<DeleteOutlined />}
                 >
                   删除
                 </a>
@@ -280,12 +280,13 @@ class DictionaryView extends Component<
           style={{
             position: "absolute",
             top: 10,
+            backgroundColor: 'rgb(0,68,107)', border: 'rgb(0,68,107)'
           }}
           onClick={() => {
             /* original data */
             var filename = "dict.xls";
             // const data:Array<Array<string>> = [['标签', '全称', '别名']]
-            const data:Array<Array<string>> = tableData.map((value: { name: string; label: string; key?: string | undefined; abbreviations: string[]; }) => [
+            const data: Array<Array<string>> = tableData.map((value: { name: string; label: string; key?: string | undefined; abbreviations: string[]; }) => [
               value['label'], value['name'], ...value['abbreviations']
             ])
             data.unshift(['标签', '全称', '别名'])
@@ -321,6 +322,7 @@ class DictionaryView extends Component<
             position: "absolute",
             top: 10,
             left: 120,
+            backgroundColor: 'rgb(0,68,107)', border: 'rgb(0,68,107)'
           }}
         >
           增加字典
@@ -331,32 +333,32 @@ class DictionaryView extends Component<
 
   public componentDidMount() {
     //
-    console.log('dictionaryView',this.props.tableData)
+    console.log('dictionaryView', this.props.tableData)
   }
 
-  private updateDictionary (dictionary:{
+  private updateDictionary(dictionary: {
     name: string,
     label: string,
     key?: string,
     abbreviations: Array<string>
   }) {
     axios.put(`${PATH}/update_dictionary`, dictionary)
-    .then((res:AxiosResponse<any, any>) => {
-      // console.log(res.data)
-      const { data: response } = res;
-      if (response['status'] === 200 && response['message'] === '更新成功') {
-        message.success('更新成功', 1);
-      } else if (response['status'] === 403 && response['message'] === '未登录') {
-        message.error('请您先登录', 1.5, () => {
-          this.props.history.push('/')
-        })
-      }
-    })
+      .then((res: AxiosResponse<any, any>) => {
+        // console.log(res.data)
+        const { data: response } = res;
+        if (response['status'] === 200 && response['message'] === '更新成功') {
+          message.success('更新成功', 1);
+        } else if (response['status'] === 403 && response['message'] === '未登录') {
+          message.error('请您先登录', 1.5, () => {
+            this.props.history.push('/')
+          })
+        }
+      })
   }
 
-  private deleteDictionary (_id: string, key: string) {
+  private deleteDictionary(_id: string, key: string) {
     axios.delete(`${PATH}/delete_dictionary?_id=${_id}&key=${key}`)
-      .then((res:AxiosResponse<any>) => {
+      .then((res: AxiosResponse<any>) => {
         // console.log(res.data)
         message.success('删除成功', 1);
       })

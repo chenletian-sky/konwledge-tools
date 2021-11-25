@@ -10,11 +10,11 @@ import 'antd/dist/antd.css';
 import { UploadOutlined, PlayCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import Icon, { UserOutlined } from '@ant-design/icons';
 // 自定义icon
-import { DictionaryIcon, TrainIcon,DataVisualIcon, LabelIcon, MenuLabelIcon, Logo, SaveIcon, importIcon } from './Icon';
+import { DictionaryIcon, TrainIcon, DataVisualIcon, LabelIcon, MenuLabelIcon, Logo, SaveIcon, importIcon } from './Icon';
 // redux
 import { connect } from 'react-redux';
-import { MainStoreType, StoreType, TableDataType, TextsDataType ,MenuStoreType, TextViewStoreType, MarkViewStoreType, InitMarkText} from '../types/propsTypes';
-import { identifyEntity,changeMenuSelect, setLoadingState, updateAllDictionaryData, updateAllTextsData, updateDictionaryData, updateLabelByShow, updateMarkTextData, updateTextsData } from '../action';
+import { MainStoreType, StoreType, TableDataType, TextsDataType, MenuStoreType, TextViewStoreType, MarkViewStoreType, InitMarkText } from '../types/propsTypes';
+import { identifyEntity, changeMenuSelect, setLoadingState, updateAllDictionaryData, updateAllTextsData, updateDictionaryData, updateLabelByShow, updateMarkTextData, updateTextsData } from '../action';
 // 路由页面
 import DictionaryView from './DictionaryView';
 import TextView from './TextView';
@@ -35,8 +35,8 @@ import ClusteringPlot from './ClusteringPlot/index';
 import WordCloud from './WordCloud/yu/index';
 import LoadingOutlined from '@ant-design/icons/lib/icons/LoadingOutlined';
 
-import {  Result, Statistic } from 'antd';
-import { LikeOutlined,  } from '@ant-design/icons';
+import { Result, Statistic } from 'antd';
+import { LikeOutlined, } from '@ant-design/icons';
 
 import type { BasicLayoutProps, ProSettings } from '@ant-design/pro-layout';
 import ProLayout, { PageContainer, SettingDrawer } from '@ant-design/pro-layout';
@@ -76,31 +76,31 @@ const content = (
   </Descriptions>
 );
 
-interface MenuSelectKeyChangeType{
-  [index:string]:string
+interface MenuSelectKeyChangeType {
+  [index: string]: string
 }
 
-const MenuSelectKeyChange:MenuSelectKeyChangeType ={
-  "texts":"语料数据",
-  'mark':"标注数据",
-  'train':"训练数据",
-  '':"知识图谱项目"
-} 
+const MenuSelectKeyChange: MenuSelectKeyChangeType = {
+  "texts": "语料数据",
+  'mark': "标注数据",
+  'train': "训练数据",
+  '': "知识图谱项目"
+}
 
-interface MainProps extends MainStoreType , MenuStoreType,StoreType{
+interface MainProps extends MainStoreType, MenuStoreType, StoreType {
   history: any,
   // MainStoreData:MainStoreType
-  TextViewData:TextViewStoreType,
-  MarkViewData:MarkViewStoreType,
-  TrainViewData:MarkViewStoreType,
+  TextViewData: TextViewStoreType,
+  MarkViewData: MarkViewStoreType,
+  TrainViewData: MarkViewStoreType,
   // MenuSelectKey:Array<string>,
   updateAllTextsData: typeof updateAllTextsData,
   updateAllDictionaryData: typeof updateAllDictionaryData,
-//   updateLabelByShow: typeof updateLabelByShow,
+  //   updateLabelByShow: typeof updateLabelByShow,
   updateDictionaryData: typeof updateDictionaryData,
   updateTextsData: typeof updateTextsData,
-//   setLoadingState: typeof setLoadingState,
-//   identifyEntity: typeof identifyEntity,
+  //   setLoadingState: typeof setLoadingState,
+  //   identifyEntity: typeof identifyEntity,
   updateMarkTextData: typeof updateMarkTextData,
   changeMenuSelect: typeof changeMenuSelect
 }
@@ -114,11 +114,11 @@ interface MainState {
     name: string,
     repositoryId: string,
   }>,
-  isLoading:boolean,
-  isUpload:boolean,
-  isComplete:boolean,
-  settings:Partial<ProSettings> | undefined,
-  pathname:string
+  isLoading: boolean,
+  isUpload: boolean,
+  isComplete: boolean,
+  settings: Partial<ProSettings> | undefined,
+  pathname: string
 }
 class Main extends Component<MainProps, MainState>{
   public constructor(props: MainProps) {
@@ -135,27 +135,27 @@ class Main extends Component<MainProps, MainState>{
       // menuSelectKeys:['texts'],
       selectedKeys: [],
       repositories: [{ name: '私有仓库', repositoryId: 'private' }],
-      isLoading:false,
-      isUpload:false,
-      isComplete:false,
-      settings:{ 
+      isLoading: false,
+      isUpload: false,
+      isComplete: false,
+      settings: {
         // fixSiderbar: true ,
-        navTheme:'light',
+        navTheme: 'light',
         // layout:'mix'
         // headerTheme:'light'
       },
-      pathname:"/welcome"
+      pathname: "/welcome"
     }
   }
 
-  public render():JSX.Element{
-    const {settings,pathname} = this.state
-    const {TextArea} = Input
-    return(<div
+  public render(): JSX.Element {
+    const { settings, pathname } = this.state
+    const { TextArea } = Input
+    return (<div
       id="test-pro-layout"
       style={{
         height: '100%',
-        width:"100%"
+        width: "100%"
       }}
     >
       <ProLayout
@@ -163,13 +163,13 @@ class Main extends Component<MainProps, MainState>{
         location={{
           pathname,
         }}
-        
+
         contentStyle={{
           // backgroundColor:'red'
         }}
         title="实体抽取工具"
-        logo={<Icon   component={Logo}></Icon>}
-        collapsedButtonRender= {()=> {
+        logo={<Icon component={Logo}></Icon>}
+        collapsedButtonRender={() => {
           return (<div></div>)
         }}
         menuHeaderRender={(logo, title) => (
@@ -179,9 +179,9 @@ class Main extends Component<MainProps, MainState>{
               // window.open('https://remaxjs.org/');
             }}
             style={{
-              backgroundColor:'#066094',
+              backgroundColor: '#066094',
               // float:"left"
-              height:"50px",
+              height: "50px",
               // color:"white"
             }}
           >
@@ -197,34 +197,34 @@ class Main extends Component<MainProps, MainState>{
               /> */}
             <div
               style={{
-                height:"10px",
-                width:"10px",
-                position:'relative',
-                left:"10px",
-                top:'10px'
+                height: "10px",
+                width: "10px",
+                position: 'relative',
+                left: "10px",
+                top: '10px'
               }}
             >
-            <Logo/>
+              <Logo />
             </div>
-            
-            
-             <h1
+
+
+            <h1
               id="logotitle-title"
               style={{
-                color:"white",
-                position:"relative",
-                textAlign:"center",
-                fontSize:"20px"
+                color: "white",
+                position: "relative",
+                textAlign: "center",
+                fontSize: "20px"
                 // left:"0px"
               }}
-             >
-             实体抽取工具
-             </h1>
-              
-            
-              
-            
-            
+            >
+              实体抽取工具
+            </h1>
+
+
+
+
+
           </div>
         )}
         onMenuHeaderClick={(e: any) => console.log(e)}
@@ -234,40 +234,40 @@ class Main extends Component<MainProps, MainState>{
               // height:"50px",
               // position:"relative",
               // top:"5px",
-              fontSize:"20px",
-              textAlign:"center"
+              fontSize: "20px",
+              textAlign: "center"
             }}
             onClick={() => {
-              console.log('menuItemClick',item,dom)
+              console.log('menuItemClick', item, dom)
 
               this.props.history.push(`/index${item.path}`)
               this.setState({
-                pathname:(item.path || '/welcome')
+                pathname: (item.path || '/welcome')
               })
-              
+
             }}
           >
             {dom}
           </a>
         )}
-        headerRender= {(props:HeaderViewProps)=>{
-            return (<div
-              style={{
-                height:"50px",
-                backgroundColor:"#00446B"
-                // backgroundColor:"red"
-                
-              }}
-            >
-              &nbsp;
-              <Avatar size='large' icon={<UserOutlined />} style={{
-                float: 'right',
-                marginTop: '4px',
-                // marginRight: '15px'
-                // marginTop: '-47px',
-                // marginRight: '15px'
-              }}/>
-            </div>)
+        headerRender={(props: HeaderViewProps) => {
+          return (<div
+            style={{
+              height: "50px",
+              backgroundColor: "#00446B"
+              // backgroundColor:"red"
+
+            }}
+          >
+            &nbsp;
+            <Avatar size='large' icon={<Logo />} style={{
+              float: 'right',
+              marginTop: '4px',
+              marginRight: '10px'
+              // marginTop: '-47px',
+              // marginRight: '15px'
+            }} />
+          </div>)
         }}
         headerContentRender={(props: BasicLayoutProps) => {
           return <div
@@ -276,7 +276,7 @@ class Main extends Component<MainProps, MainState>{
               // backgroundColor:"white"
             }}
           >
-              {/* hello */}
+            {/* hello */}
           </div>;
         }}
         rightContentRender={() => (
@@ -286,9 +286,9 @@ class Main extends Component<MainProps, MainState>{
               // backgroundColor:"#00446B"
             }}
           >
-            <Avatar shape="square" size="large" icon={<UserOutlined />} 
+            <Avatar shape="square" size="large" icon={<UserOutlined />}
               style={{
-                float:"right"
+                float: "right"
               }}
             />
           </div>
@@ -313,71 +313,72 @@ class Main extends Component<MainProps, MainState>{
           // content={()=>{
           //   return(<div>hello</div>)
           // }}
-          onTabChange = {(value) => {
-            console.log("pageContainer",value)
+          onTabChange={(value) => {
+            console.log("pageContainer", value)
           }}
-          // header = {(any:Partial<PageHeaderProps>  & { children?: ReactNode; }) => {
-          //   return(<div>hellp</div>)
-          // }}
-          // extraContent={
-          //   <Space size={24}>
-          //     <Statistic title="Feedback" value={1128} prefix={<LikeOutlined />} />
-          //     <Statistic title="Unmerged" value={93} suffix="/ 100" />
-          //   </Space>
-          // }
-          // extra={[
-          //   <Button key="3">操作</Button>,
-          //   <Button key="2">操作</Button>,
-          //   <Button key="1" type="primary">
-          //     主操作
-          //   </Button>,
-          // ]}
-          // footer={[
-          //   <Button key="3">重置</Button>,
-          //   <Button key="2" type="primary">
-          //     提交
-          //   </Button>,
-          // ]}
+        // header = {(any:Partial<PageHeaderProps>  & { children?: ReactNode; }) => {
+        //   return(<div>hellp</div>)
+        // }}
+        // extraContent={
+        //   <Space size={24}>
+        //     <Statistic title="Feedback" value={1128} prefix={<LikeOutlined />} />
+        //     <Statistic title="Unmerged" value={93} suffix="/ 100" />
+        //   </Space>
+        // }
+        // extra={[
+        //   <Button key="3">操作</Button>,
+        //   <Button key="2">操作</Button>,
+        //   <Button key="1" type="primary">
+        //     主操作
+        //   </Button>,
+        // ]}
+        // footer={[
+        //   <Button key="3">重置</Button>,
+        //   <Button key="2" type="primary">
+        //     提交
+        //   </Button>,
+        // ]}
         >
-          
+
           {
             <div
-            style={{
-              height: '120vh',
-              // position:"relative",
-              // top:"-15px"
-            }}
-          >
-            <div
               style={{
-                height:"50px",
-                backgroundColor:"rgb(0, 68, 107)"
+                height: '120vh',
+                // position:"relative",
+                // top:"-15px"
               }}
             >
-              {/* hello */}
-            </div>
-            <Switch>
+              <div
+                style={{
+                  height: "50px",
+                  // backgroundColor: "rgb(0, 68, 107)"
+                  background: '#2188E2'
+                }}
+              >
+                {/* hello */}
+              </div>
+              <Switch>
 
-              <Route path="/index/dict" component={DictControl} />
-              
-              <Route path="/index/text" component={TextControl} />
+                <Route path="/index/dict" component={DictControl} />
 
-              <Route path="/index/tool" component={ToolControl}></Route>
-              {/* <Route path="/index/tool" component={}></Route> */}
+                <Route path="/index/text" component={TextControl} />
 
-              {/* <Route path="/index/texts" component={TextView}/>
+                <Route path="/index/tool" component={ToolControl}></Route>
+                {/* <Route path="/index/tool" component={}></Route> */}
+
+                {/* <Route path="/index/texts" component={TextView}/>
               <Route path='/index/mark' component={MarkView} />
               <Route path='/index/dataVisualization' component={DataVisualView} />
 
 
               <Route path='/index/train' component={TrainView} /> */}
 
-            </Switch>
-            
-                  
-          </div>
+              </Switch>
+
+
+            </div>
           }
-          
+
         </PageContainer>
       </ProLayout>
       {/* <SettingDrawer
@@ -403,7 +404,7 @@ class Main extends Component<MainProps, MainState>{
   //   const { labelList, stringList, openKeys, selectedKeys, repositories } = this.state;
   //   const { history, textsData, dictionaryData ,MenuSelectKey} = this.props;
   //   const { updateAllTextsData, changeMenuSelect,updateTextsData, updateAllDictionaryData, updateDictionaryData} = this.props;
-    
+
   //   console.log("MainMenuSelectKeys",MenuSelectKey,dictionaryData)
   //   // console.log(dictionaryData)
   //   return (
@@ -461,7 +462,7 @@ class Main extends Component<MainProps, MainState>{
   //                     updateDictionaryData(dictionaryData[value])
   //                     this.setState({ selectedKeys: [value] })
   //                     history.push('/index/dictionary')
-                      
+
   //                   }
   //                 }>
   //                   {value}
@@ -522,8 +523,8 @@ class Main extends Component<MainProps, MainState>{
   //           }>
   //             训练数据
   //           </Menu.Item>
-            
-            
+
+
   //           <SubMenu
   //             key='uploadData'
   //             title="上传数据"
@@ -548,7 +549,7 @@ class Main extends Component<MainProps, MainState>{
   //             </Menu.Item>
   //             <Menu.Item
   //               onClick={()=>{
-                  
+
   //                 $('input#text-files').click()
   //                 // const path: string = ipcRenderer.sendSync(UPLOAD_TEXTS_DATA)
   //                 // if (path === '') {
@@ -567,7 +568,7 @@ class Main extends Component<MainProps, MainState>{
   //                 // this.setState({
   //                 //   isLoading:true
   //                 // })
-                  
+
   //                 this.setState({ openKeys: ['text'], selectedKeys: ['text' + index] })
   //                 // this.readTxtFile(path)
   //               }}
@@ -589,7 +590,7 @@ class Main extends Component<MainProps, MainState>{
   //                     // isComplete:true
   //                   })
 
-                    
+
   //                 }
   //               })
   //             }}
@@ -605,15 +606,15 @@ class Main extends Component<MainProps, MainState>{
   //                   message.error('初始化失败',1)
   //                 }else if(res.data.status == 200){
   //                   message.success('初始化成功',1)
-                    
+
   //                   axios.get(`${PATH}/get_xferStation` )
   //                           .then((res: AxiosResponse<any>) => {
   //                             const { data: response } = res;
   //                             if (response['status'] === 200 && response['message'] === '获取成功') {
   //                               // console.log("before",response.data)
-                                
+
   //                               const fileData = response.data
-                                
+
   //                               const after =  fileData.map((value:InitMarkText, i: string)=>{
   //                                 let returnValue = {
   //                                     text: value['text'],
@@ -641,10 +642,10 @@ class Main extends Component<MainProps, MainState>{
 
   //                                 return returnValue
   //                               })
-                                
+
   //                               // console.log(after)
-                                
-                                
+
+
   //                               updateTextsData(after)
   //                               updateMarkTextData(after)
 
@@ -666,7 +667,7 @@ class Main extends Component<MainProps, MainState>{
   //                                   message.error("语料更新失败！")
   //                                 }
   //                               })
-                                
+
   //                             } else {
   //                               message.error('请您先登录', 1.5, () => {
   //                                 this.props.history.push('/')
@@ -696,7 +697,7 @@ class Main extends Component<MainProps, MainState>{
   //             <Menu.Item>导出txt</Menu.Item>
   //             {/* <Menu.Item></Menu.Item> */}
   //           </SubMenu>
-            
+
   //           {/* <Menu.Item 
   //             style={{fontSize:'20px'}}
   //             key="dataVisualization" icon={<DataVisualIcon/>} onClick={
@@ -708,11 +709,11 @@ class Main extends Component<MainProps, MainState>{
   //           }>
   //             &nbsp;数据可视化
   //           </Menu.Item> */}
-           
+
   //         </Menu>
   //       </Sider>
   //       {
-          
+
   //           // <Spin
   //           //   size="large"
   //           //   indicator={<LoadingOutlined spin />}
@@ -724,7 +725,7 @@ class Main extends Component<MainProps, MainState>{
   //           //   }}
   //           // >
   //           // </Spin>
-            
+
   //         <Layout className="site-layout"  style={{height:'100%'}}>
   //         <Header className="site-layout-background" style={{ padding: 0, backgroundColor: 'rgb(0, 68, 107)' }}>
   //           {/* <Menu mode="horizontal" style={{ fontSize: '1.5em', width: '100%', color: 'white', backgroundColor: 'rgb(22,21,204)' }}>
@@ -796,9 +797,9 @@ class Main extends Component<MainProps, MainState>{
   //                             key: Number(Math.random().toString().substr(3, 10) + Date.now()).toString(36),
   //                             abbreviations: [...data[i].slice(2)]
   //                           }
-                            
+
   //                           dataByAdd.push(d)
-                            
+
   //                           if(labelList.includes(data[i][0])) {
   //                             dictionaryData[data[i][0]].push(d)
   //                           } else {
@@ -860,7 +861,7 @@ class Main extends Component<MainProps, MainState>{
   //                       updateTextsData(textsData)
   //                       // console.log("textData",textsData)
   //                       // axios.post(`/upload_texts`, textsData, {withCredentials: true})
-                        
+
   //                       // this.setState({
   //                       //   isUpload:true
   //                       // })
@@ -872,15 +873,15 @@ class Main extends Component<MainProps, MainState>{
   //                                 // isLoading:true
   //                               })
 
-                                
-                                
+
+
   //                             }
   //                             // console.log(res)
   //                           }).finally(()=>{
   //                             console.log('finally')
-                              
+
   //                           })
-                        
+
 
   //                       history.push('/index/texts')
   //                       changeMenuSelect(['texts'])
@@ -889,7 +890,7 @@ class Main extends Component<MainProps, MainState>{
   //                       //   isComplete:true
   //                       // })
   //                       // updateAllTextsData(textsData)
-                        
+
   //                       // stringList.push(name)
   //                       // this.setState({ stringList })
   //                     }
@@ -927,7 +928,7 @@ class Main extends Component<MainProps, MainState>{
   //                       if(res.data.status === 400){
   //                         message.error("调用失败")
   //                       }else{
-                          
+
   //                         message.success("调用成功")
   //                       }
   //                     })
@@ -936,9 +937,9 @@ class Main extends Component<MainProps, MainState>{
   //                   实体标注
   //                 </Button> */}
   //               </div>
-                
+
   //             </Menu>
-                  
+
   //               <Switch>
   //                 <Route path="/index/dictionary" component={DictionaryView} />
   //                 <Route path="/index/texts" component={TextView}/>
@@ -947,13 +948,13 @@ class Main extends Component<MainProps, MainState>{
   //                 {/* <Route path='/index/' component={} /> */}
 
   //                 <Route path='/index/train' component={TrainView} />
-                  
+
   //                 {/* <Route path="/force-directed" component={ForceDirectedView} exact/> */}
   //               </Switch>
   //             </div>
 
   //             <div style={{ width: '38%', height: '100%', marginLeft: '1%', background: 'white', float: 'left' }}>
-                
+
   //               <div
   //                 id='ClusteringPlot'
   //                 style={{
@@ -991,37 +992,37 @@ class Main extends Component<MainProps, MainState>{
   //                     isComplete={this.state.isComplete}
   //                   />)
   //                 } */}
-                  
+
   //               </div>
 
-                
-              
+
+
   //             </div>
-              
+
   //           </Content>
-            
+
   //         </Layout>
   //       </Layout>
   //       }
-        
+
   //     </Layout>
   //   )
   // }
 
   public componentDidMount(): void {
     const { labelList } = this.state;
-    const { history, updateAllDictionaryData, updateTextsData, updateMarkTextData,updateDictionaryData } = this.props;
-    axios.get(`${PATH}/get_dictionary` )
+    const { history, updateAllDictionaryData, updateTextsData, updateMarkTextData, updateDictionaryData } = this.props;
+    axios.get(`${PATH}/get_dictionary`)
       .then((res: AxiosResponse<any>) => {
         const { data: response } = res;
         if (response['status'] === 200 && response['message'] === '获取成功') {
-          const dictionaryData:{
+          const dictionaryData: {
             [label: string]: TableDataType
           } = {}
           const { data } = response;
           // console.log(data)
-          for(let i = data.length - 1; i > 0; i--) {
-            if(labelList.includes(data[i]['label'])) {
+          for (let i = data.length - 1; i > 0; i--) {
+            if (labelList.includes(data[i]['label'])) {
               dictionaryData[data[i]['label']].push(data[i])
             } else {
               labelList.push(data[i]['label'])
@@ -1037,7 +1038,7 @@ class Main extends Component<MainProps, MainState>{
           })
         }
       })
-    axios.get(`${PATH}/get_texts` )
+    axios.get(`${PATH}/get_texts`)
       .then((res: AxiosResponse<any>) => {
         const { data: response } = res;
         if (response['status'] === 200 && response['message'] === '获取成功') {
@@ -1049,12 +1050,12 @@ class Main extends Component<MainProps, MainState>{
           })
         }
       })
-    
-    axios.get(`${PATH}/get_wordCloudData`,{withCredentials:true}).then((res:AxiosResponse<any,any>) => {
+
+    axios.get(`${PATH}/get_wordCloudData`, { withCredentials: true }).then((res: AxiosResponse<any, any>) => {
       // console.log('wordCloudData',res.data)
-      if(res.data.data === {}){
+      if (res.data.data === {}) {
         this.setState({
-          isComplete:true
+          isComplete: true
         })
       }
     })
@@ -1067,15 +1068,15 @@ class Main extends Component<MainProps, MainState>{
 
 
 const mapStateToProps = (state: StoreType, ownProps?: any) => {
-  const { Main,MenuView ,TextView,MarkView,TrainView} = state
+  const { Main, MenuView, TextView, MarkView, TrainView } = state
   // console.log()
   return {
     ...ownProps,
     ...Main,
     ...MenuView,
-    TextViewData:TextView,
-    MarkViewData:MarkView,
-    TrainViewData:TrainView
+    TextViewData: TextView,
+    MarkViewData: MarkView,
+    TrainViewData: TrainView
   }
 }
 
