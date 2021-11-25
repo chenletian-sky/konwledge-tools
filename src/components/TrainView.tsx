@@ -497,7 +497,9 @@ class TrainView extends Component <TrainViewProps, TrainViewState>{
                                   
                                   // console.log("before",response.data)
                                   
-                                  const fileData = response.data
+                                  let fileData = response.data
+
+                                  fileData = fileData[1]
                                   
                                   const after =  fileData.map((value:InitMarkText, i: string)=>{
                                     let returnValue = {
@@ -511,6 +513,7 @@ class TrainView extends Component <TrainViewProps, TrainViewState>{
                                             color: '',
                                         }))
                                     }
+                                    
                                     for(let i = value['labels'].length - 1; i >= 0; i--) {
                                         const { start, end, label } = value['labels'][i]
                                         // console.log("each",start,end,label)
@@ -545,7 +548,7 @@ class TrainView extends Component <TrainViewProps, TrainViewState>{
                                     // console.log(res.data)
                                     if(res.data.status === 200){
                                       message.success("语料数据更新成功！")
-                                      this.props.history.push('/index/mark')
+                                      // this.props.history.push('/index/mark')
                                       changeMenuSelect(['mark'])
                                     }else{
                                       message.error("语料数据更新失败！")

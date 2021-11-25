@@ -1,8 +1,13 @@
 import DownOutlined from '@ant-design/icons/lib/icons/DownOutlined';
 import ProCard from '@ant-design/pro-card';
-import { Button, Col, Dropdown, Menu, Row, Select, Space, Table } from 'antd';
+import { Button, Col, Dropdown, Menu, message, Row, Select, Space, Table } from 'antd';
+import axios, { AxiosResponse } from 'axios';
 import React, {Component} from 'react';
-import TextView from '../../TextView';
+import { PATH } from '../../../types/actionTypes';
+import { InitMarkText } from '../../../types/propsTypes';
+// import ShowMarkText from '../../OtherView/ShowMarkText';
+import ShowTrainText from '../../OtherView/ShowTrainText';
+// import TextView from '../../TextView';
 import './DictMatchConfig.css'
 
 const {Option} = Select
@@ -17,6 +22,74 @@ class DictMatchConfig extends Component <DictMatchConfigProps, DictMatchCon
     public constructor(props : DictMatchConfigProps) {
         super(props)
     }
+
+    componentDidMount(){
+      false  && (axios.get(`${PATH}/get_xferStation` )
+      .then((res: AxiosResponse<any>) => {
+        const { data: response } = res;
+        if (response['status'] === 200 && response['message'] === '获取成功') {
+          
+          // console.log("before",response.data)
+          
+          const fileData = response.data
+          
+          const after =  fileData.map((value:InitMarkText, i: string)=>{
+            let returnValue = {
+                text: value['text'],
+                key: Number(Math.random().toString().substr(3, 10) + Date.now()).toString(36),
+                textArr: value['text'].split('').map((v: any, index: any) => ({
+                    text: v,
+                    start: index,
+                    end: index,
+                    label: 'none',
+                    color: '',
+                }))
+            }
+            
+            for(let i = value['labels'].length - 1; i >= 0; i--) {
+                const { start, end, label } = value['labels'][i]
+                // console.log("each",start,end,label)
+                returnValue['textArr'].splice(start, end - start)
+                returnValue['textArr'].splice(start, 0, {
+                    text: value['text'].slice(start, end),
+                    start,
+                    end: end - 1,
+                    label,
+                    color:'#d1c7b7'
+                })
+            }
+
+            return returnValue
+          })
+          
+          // console.log("afterData",after)
+          
+          
+
+          // updateTrainData(after)
+          // updateMarkTextData(after)
+
+          axios.get(`${PATH}/delete_xferStation`,{withCredentials:true}).then((res:AxiosResponse<any>) =>{
+                      if(res.data.status === 200){
+                        // console.l
+                        message.success("初始化中转站成功！")
+                      }
+                    })
+          
+          axios.post(`${PATH}/update_texts`,after,{withCredentials:true}).then((res:AxiosResponse<any>) => {
+            // console.log(res.data)
+            if(res.data.status === 200){
+              message.success("语料数据更新成功！")
+              // this.props.history.push('/index/mark')
+              // changeMenuSelect(['mark'])
+            }else{
+              message.error("语料数据更新失败！")
+            }
+          })
+        } 
+      }))
+      
+    }
 
     public render() : JSX.Element {
         
@@ -143,10 +216,14 @@ class DictMatchConfig extends Component <DictMatchConfigProps, DictMatchCon
                     <ProCard
                       colSpan="50%"
                     >
-                       <TextView></TextView>
+                      <ShowTrainText 
+                        // data={}
+                      ></ShowTrainText>
+                       {/* <TextView></TextView> */}
                     </ProCard>
                     <ProCard>
-                       <TextView></TextView>
+                      {/* <ShowMarkText></ShowMarkText> */}
+                       {/* <TextView></TextView> */}
                     </ProCard>
                    
                     

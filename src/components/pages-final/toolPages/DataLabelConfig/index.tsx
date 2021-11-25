@@ -5,6 +5,7 @@ import { Button,Radio,Select,Space,Table } from 'antd'
 import { ColumnsType } from 'antd/lib/table';
 import TrainView from '../../../TrainView';
 import ProCard from '@ant-design/pro-card';
+import MarkView from '../../../MarkView';
 
 
 interface DataLabelConfigProps {
@@ -128,7 +129,7 @@ class DataLabelConfig extends Component <DataLabelConfigProps, DataLabelCon
                   }}
                 >
                   <ProCard
-                    colSpan="100%"
+                    // colSpan="100%"
                   >
                     <div>
                       <div className="YuLiaoPeiZhi-Head"
@@ -169,9 +170,10 @@ class DataLabelConfig extends Component <DataLabelConfigProps, DataLabelCon
                       // height:"60%"
                     }}
                   >
-                    <TrainView 
+                    <MarkView PageSizeNeedChange={6}></MarkView>
+                    {/* <TrainView 
                       
-                    ></TrainView>
+                    ></TrainView> */}
                   </ProCard>
                 </ProCard>
                 

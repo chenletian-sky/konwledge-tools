@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { Button, Select, Input, Slider, InputNumber, Row, Col, Table } from 'antd';
 import 'antd/dist/antd.css';
+import TrainView from '../../TrainView';
 
 const { Option } = Select;
 
@@ -42,6 +43,9 @@ class TextIdentify extends Component <TextIdentifyProps, TextIdentifyState>
                   <Button style={buttonStyle}>导出</Button>
                 </div>
               </div>
+            </div>
+            <div style={{width:"100%",height:"80%"}}>
+              <TrainView></TrainView>
             </div>
           </div>
     }

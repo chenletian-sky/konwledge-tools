@@ -9,7 +9,7 @@ import { PATH } from '../../../types/actionTypes';
 import { Spin } from 'antd';
 // import {image} from "../../image"   //词云图形状的编码
 // 导入json文件数据的方式  所有类词云图的数据接口
-// const WordsCloudData = require("./data/class_word_cloud_data.json")
+const WordsCloudData = require("./10class_word_cloud_data.json")
 
 interface WordCloudDataType{
     [classId:string]:Array<{
@@ -42,7 +42,7 @@ export default class WordsCloud extends Component<Props, State> {
         super(props);
         this.state = {
             classId: "0",   //用于调节绘制哪个类的词云图
-            WordsCloudData:{}
+            WordsCloudData:WordsCloudData
         }
     }
     
@@ -116,29 +116,29 @@ export default class WordsCloud extends Component<Props, State> {
     componentDidMount(){
         // WordsCloudData
         
-        axios.get(`${PATH}/get_wordCloudData`,{withCredentials:true}).then( (response: { data: { data: any; }; })=>{
-        // axios.get(`${PATH}/public/data/3000class_word_cloud_data.json`,{withCredentials:true}).then( (response)=>{  
-            // let data = response
-            // console.log('wordCloud',response)
-            // let {data} = response.data
-            // console.log("testCloud",data)
-            // data = data['0']
-            // console.log("wordCloudData",data)
-            // let afterdata:WordCloudDataType = []
-            // for(let i=0;i<data.length;i++){
-            // afterdata.push({
-            //     "text":data[i]['name'],
-            //     "value":data[i]['value']})
-            // }
+        // axios.get(`${PATH}/get_wordCloudData`,{withCredentials:true}).then( (response: { data: { data: any; }; })=>{
+        // // axios.get(`${PATH}/public/data/3000class_word_cloud_data.json`,{withCredentials:true}).then( (response)=>{  
+        //     // let data = response
+        //     // console.log('wordCloud',response)
+        //     // let {data} = response.data
+        //     // console.log("testCloud",data)
+        //     // data = data['0']
+        //     // console.log("wordCloudData",data)
+        //     // let afterdata:WordCloudDataType = []
+        //     // for(let i=0;i<data.length;i++){
+        //     // afterdata.push({
+        //     //     "text":data[i]['name'],
+        //     //     "value":data[i]['value']})
+        //     // }
             
-            this.setState({
-                WordsCloudData:response.data.data
-            })
-            // console.log(afterdata)
-            // wordCloud(document.getElementById('wordCloudChart') as any, { list: afterdata } );
-        },(error: any)=>{
-            console.log(error)
-        })
+        //     this.setState({
+        //         WordsCloudData:response.data.data
+        //     })
+        //     // console.log(afterdata)
+        //     // wordCloud(document.getElementById('wordCloudChart') as any, { list: afterdata } );
+        // },(error: any)=>{
+        //     console.log(error)
+        // })
 
         if(this.props.isComplete){
             this.setState({

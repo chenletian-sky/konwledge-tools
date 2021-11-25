@@ -23,8 +23,10 @@ interface MarkViewProps extends MarkViewStoreType {
 	updateMarkTextData: typeof updateMarkTextData,
 	updateTextsData: typeof updateTextsData,
 	updateTrainData: typeof updateTrainData,
-	changeMenuSelect:typeof changeMenuSelect
+	changeMenuSelect:typeof changeMenuSelect,
+	PageSizeNeedChange?:number
 }
+
 interface MarkViewState {
 	editKey: string,
 	labels: Array<{
@@ -224,7 +226,7 @@ class MarkView extends Component<MarkViewProps, MarkViewState>{
 		return (
 			<div style={{
 				width: '100%',
-				height: '500px',
+				// height: '500px',
 				// backgroundColor: 'red'
 				// borderBottom: '1px solid black'
 			}}>
@@ -421,10 +423,10 @@ class MarkView extends Component<MarkViewProps, MarkViewState>{
 					}
 				</div>
 				
-				<Table columns={this.columns} dataSource={data} size='middle' 
-					// scroll={{ y: 750 }}
+				<Table columns={this.columns} dataSource={data} size='small' 
+					// scroll={{ y:  }}
 					pagination={{
-						pageSize: 12,
+						pageSize: this.props.PageSizeNeedChange && this.props.PageSizeNeedChange < 12 ? this.props.PageSizeNeedChange : 12 ,
 						current,
 						simple: true,
 						position: ['bottomRight'],

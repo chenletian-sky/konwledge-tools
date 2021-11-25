@@ -124,7 +124,7 @@ class ClusteringPlot extends Component <ClusteringPlotProps, ClusteringPlot
                                 
                                 updateMarkTextData(textsData)
                                 changeMenuSelect(['mark'])
-                                this.props.history.push('/index/mark')
+                                // this.props.history.push('/index/mark')
                                 // textsData = textsData.map((obj: any,index: any) => {
                                 //     if(afterData.includes(index))
                                 //         return obj
@@ -178,7 +178,7 @@ class ClusteringPlot extends Component <ClusteringPlotProps, ClusteringPlot
                 }}
             >
             
-                    <Slider defaultValue={30}  
+                    {/* <Slider defaultValue={30}  
                         style={{
                             width:"40%",
                             // height:"10%"
@@ -186,7 +186,7 @@ class ClusteringPlot extends Component <ClusteringPlotProps, ClusteringPlot
                         onAfterChange={(value)=>{
                             this.setState({percent:value})
                         }}
-                />
+                /> */}
             
             
                 <svg className="scatter_svg"

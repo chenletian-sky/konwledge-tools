@@ -89,9 +89,10 @@ class TextControl extends Component <TextControlProps, TextControlState>{
                         <span
                         style={{
                           position:'relative',
-                          top:"-20px",
+                          top:"-24px",
                           zIndex:99,
-                          backgroundColor:"white"
+                          backgroundColor:"white",
+                          fontSize:"20px"
                         }}
                       >新增语料</span>
                       </div>
@@ -261,7 +262,7 @@ class TextControl extends Component <TextControlProps, TextControlState>{
                       >
                         <div
                         style={{
-                          height:"100%",
+                          // height:"70%",
                           width:"100%",
                           border:"1px solid black",
                           padding:"10px 10px 10px 10px"
@@ -270,14 +271,17 @@ class TextControl extends Component <TextControlProps, TextControlState>{
                         <div
                           style={{
                             // margin:"10px 10px 10px 10px"
+                            position:"relative",
+                            // top:"-10px"
                           }}
                         >
                           <span
                           style={{
                             position:'relative',
-                            top:"-20px",
+                            top:"-24px",
                             zIndex:99,
-                            backgroundColor:"white"
+                            backgroundColor:"white",
+                            fontSize:"20px"
                           }}
                         >查看详情</span>
                         </div>

@@ -6,6 +6,8 @@ import { Redirect, Route , Switch} from 'react-router-dom';
 import DataVisual from './DCFRoutes/DataVisual';
 import RawText from './DCFRoutes/RawText';
 import AfterMatchText from './DCFRoutes/AfterMatchText';
+import axios, { AxiosResponse } from 'axios';
+import { PATH } from '../../../types/actionTypes';
 // import { Properties } from 'xlsx';
 
 const { Option } = Select;
@@ -147,7 +149,17 @@ class DataClassfication extends Component <DataClassficationProps, DataClas
                     value={inputValue + '%'}
                     onChange={this.onChange}
                   />
-                  <Button type="primary" style={buttonStyle}>采样</Button>
+
+                  <Button type="primary" style={buttonStyle}
+                    onClick={() => {
+                      console.log("inputValue",this.state.inputValue)
+                      axios.post(`${PATH}/api/init_vec`,{withCredentials: true}).then((res:AxiosResponse<any,any>) => {
+                        if(res.data.status === 200 ){
+                          console.log("success dec2Vec")
+                        }
+                      })
+                    }}
+                  >采样</Button>
                 </div>
 
               </div>

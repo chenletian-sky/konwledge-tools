@@ -321,7 +321,7 @@ class ToolControl extends Component <ToolControlProps, ToolControlState>{
                         <Route path='/index/tool/dictMatch' component={DictMatchConfig}></Route>
                         <Route path='/index/tool/textRec' component={TextIdentify}></Route>
                         <Route path="/index/tool/export" component={ExportData} />
-                        <Redirect to='/index/tool/loadingData'></Redirect>
+                        <Redirect to='/index/tool/'></Redirect>
                         
                         {/* <Route path="/index/tool/trainText" component={TrainText}></Route> */}
 

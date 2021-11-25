@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import ClusteringPlot from '../../../ClusteringPlot';
+import WordsCloud from '../../../WordCloud/yu';
 
 
 interface DataVisualProps {
@@ -20,7 +21,7 @@ class DataVisual extends Component <DataVisualProps, DataVisualState>{
                   <ClusteringPlot history={undefined} />
                 </div>
                 <div style={{ width: '50%', height: '100%', float: 'left', border: '1px solid gray' }}>
-                  {/* <WordsCloud isComplete={true} wordCloudClass={'3'} /> */}
+                  <WordsCloud isComplete={true} wordCloudClass={'3'} />
                 </div>
               </div>
         )
