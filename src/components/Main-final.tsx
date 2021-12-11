@@ -168,7 +168,7 @@ class Main extends Component<MainProps, MainState>{
           // backgroundColor:'red'
         }}
         title="实体抽取工具"
-        logo={<Icon   component={Logo}></Icon>}
+        // logo={<Icon   component={Logo}></Icon>}
         collapsedButtonRender= {()=> {
           return (<div></div>)
         }}
@@ -239,7 +239,7 @@ class Main extends Component<MainProps, MainState>{
             }}
             onClick={() => {
               console.log('menuItemClick',item,dom)
-
+              
               this.props.history.push(`/index${item.path}`)
               this.setState({
                 pathname:(item.path || '/welcome')
@@ -260,7 +260,9 @@ class Main extends Component<MainProps, MainState>{
             }}
           >
             &nbsp;
-            <Avatar size='large' icon={<Logo />} style={{
+            <Avatar size='large' icon={<Logo />}
+            // shape="circle" 
+            style={{
               float: 'right',
               marginTop: '4px',
               marginRight: '10px'

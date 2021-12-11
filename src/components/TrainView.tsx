@@ -18,7 +18,8 @@ interface TrainViewProps  {
   data:MarkTextsDataType,
   current:number,
 	TrainView:MarkViewStoreType,
-  MenuView:MenuStoreType
+  MenuView:MenuStoreType,
+  getTrainTextData?:any,
   // updateTextTablePage: typeof updateTextTablePage,
 	updateMarkTextData: typeof updateMarkTextData,
 	updateTextsData: typeof updateTextsData,
@@ -214,6 +215,7 @@ class TrainView extends Component <TrainViewProps, TrainViewState>{
     public render() : JSX.Element {
         const { labels, inputVisible, labelSettingConfig, popoverVisibleName, selectedRowKeys, selectedRows } = this.state
         const { history, current, data, updateTextsData, updateTrainData,updateTrainDataByDelete, updateMarkTextData,updateTrainTextTablePage ,changeMenuSelect} = this.props
+        const { getTrainTextData } = this.props
         // if ()
         // console.log(data[0]);
         return (
@@ -496,10 +498,11 @@ class TrainView extends Component <TrainViewProps, TrainViewState>{
                                 if (response['status'] === 200 && response['message'] === '获取成功') {
                                   
                                   // console.log("before",response.data)
-                                  
-                                  let fileData = response.data
-
-                                  fileData = fileData[1]
+                                  // 数据类型改变为 [ [] , []] 之前的，之后的
+                                  let fileData = response.data[0]['now']
+                                  getTrainTextData(response.data[0])
+                                  // console.log("fileData", fileData)
+                                  // fileData = fileData[1]
                                   
                                   const after =  fileData.map((value:InitMarkText, i: string)=>{
                                     let returnValue = {
@@ -530,11 +533,12 @@ class TrainView extends Component <TrainViewProps, TrainViewState>{
                                     return returnValue
                                   })
                                   
-                                  // console.log("afterData",after)
+                                  console.log("afterData",after)
                                   
                                   
 
-                                  // updateTrainData(after)
+                                   // updateTrainData(after)
+
                                   updateMarkTextData(after)
 
                                   axios.get(`${PATH}/delete_xferStation`,{withCredentials:true}).then((res:AxiosResponse<any>) =>{
@@ -546,7 +550,8 @@ class TrainView extends Component <TrainViewProps, TrainViewState>{
                                   
                                   axios.post(`${PATH}/update_texts`,after,{withCredentials:true}).then((res:AxiosResponse<any>) => {
                                     // console.log(res.data)
-                                    if(res.data.status === 200){
+                                    if(res.data.status === 200)
+                                    {
                                       message.success("语料数据更新成功！")
                                       // this.props.history.push('/index/mark')
                                       changeMenuSelect(['mark'])
@@ -554,6 +559,7 @@ class TrainView extends Component <TrainViewProps, TrainViewState>{
                                       message.error("语料数据更新失败！")
                                     }
                                   })
+
                                 } else {
                                   message.error('请您先登录', 1.5, () => {
                                     this.props.history.push('/')
@@ -563,7 +569,7 @@ class TrainView extends Component <TrainViewProps, TrainViewState>{
                     }
                   })
 
-                  
+                
                 
             }}>训练数据</Button>
             <Button type='primary' style={{
@@ -582,7 +588,6 @@ class TrainView extends Component <TrainViewProps, TrainViewState>{
                 })
               }
             }>清空</Button>
-            {/* <Button /> */}
           </div>
         )
           }

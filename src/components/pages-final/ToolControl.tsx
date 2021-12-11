@@ -60,14 +60,84 @@ interface ToolControlProps {
   history:any
 }
 interface ToolControlState {
-
+  TrainTextData:any
 }
 
 
 class ToolControl extends Component <ToolControlProps, ToolControlState>{
     public constructor(props : ToolControlProps) {
         super(props)
+        this.state ={
+          TrainTextData:{}
+        }
     }
+
+    getTrainTextData = (value:any)=> {
+      console.log(value)
+      const now = value['now'].map((value:InitMarkText, i: string)=>{
+        let returnValue = {
+            text: value['text'],
+            key: Number(Math.random().toString().substr(3, 10) + Date.now()).toString(36),
+            textArr: value['text'].split('').map((v: any, index: any) => ({
+                text: v,
+                start: index,
+                end: index,
+                label: 'none',
+                color: '',
+            }))
+        }
+        
+        for(let i = value['labels'].length - 1; i >= 0; i--) {
+            const { start, end, label } = value['labels'][i]
+            // console.log("each",start,end,label)
+            returnValue['textArr'].splice(start, end - start)
+            returnValue['textArr'].splice(start, 0, {
+                text: value['text'].slice(start, end),
+                start,
+                end: end - 1,
+                label,
+                color:'#d1c7b7'
+            })
+        }
+
+        return returnValue
+      })
+      const pre = value['pre'].map((value:InitMarkText, i: string)=>{
+        let returnValue = {
+            text: value['text'],
+            key: Number(Math.random().toString().substr(3, 10) + Date.now()).toString(36),
+            textArr: value['text'].split('').map((v: any, index: any) => ({
+                text: v,
+                start: index,
+                end: index,
+                label: 'none',
+                color: '',
+            }))
+        }
+        
+        for(let i = value['labels'].length - 1; i >= 0; i--) {
+            const { start, end, label } = value['labels'][i]
+            // console.log("each",start,end,label)
+            returnValue['textArr'].splice(start, end - start)
+            returnValue['textArr'].splice(start, 0, {
+                text: value['text'].slice(start, end),
+                start,
+                end: end - 1,
+                label,
+                color:'#d1c7b7'
+            })
+        }
+
+        return returnValue
+      })
+      
+      this.setState({
+        TrainTextData:{
+          "pre":pre,
+          "now":now
+        }
+      })
+    }
 
     create_line = ()=>{
       const elem = document.querySelector(".flow-div") as HTMLElement
@@ -93,9 +163,15 @@ class ToolControl extends Component <ToolControlProps, ToolControlState>{
       }
     }
 
-    handelClick = (e: any) =>{
-      const target_id = e.target.id
-      // console.log("onclick",target_id)
+    handelClick = (e?:any,route?:string) =>{
+      let target_id
+      if(e){
+        target_id = e.target.id
+        console.log("onclick",target_id)
+      }else{
+        target_id = route
+      }
+      
       const list_id = ["flow-btn-1","flow-btn-2","flow-btn-3","flow-btn-4" ,"flow-btn-5","flow-btn-6"]
       
       const elem = document.getElementById(target_id)
@@ -134,8 +210,26 @@ class ToolControl extends Component <ToolControlProps, ToolControlState>{
     }
 
     componentDidMount(){
-      console.log('history',this.props.history)
       this.create_line()
+      
+    }
+
+    componentDidUpdate(){
+      // let pathName = this.props.history.location.pathname
+      // console.log('tool-control-history',pathName)
+      // if(pathName === '/index/tool/loadingData'){
+      //   this.handelClick(null,'flow-btn-1')
+      // }else if(pathName === '/index/tool/handleLabel'){
+      //   this.handelClick(null,'flow-btn-3')
+      // }else if(pathName === '/index/tool/dictMatch'){
+      //   this.handelClick(null,'flow-btn-4')
+      // }else if(pathName === '/index/tool/textRec'){
+      //   this.handelClick(null,'flow-btn-5')
+      // }else if(pathName === '/index/tool/export'){
+      //   this.handelClick(null,'flow-btn-6')
+      // }else if(pathName.includes('/index/tool/dataClassfication')){
+      //   this.handelClick(null,'flow-btn-2')
+      // }
     }
 
     public render() : JSX.Element {
@@ -221,6 +315,7 @@ class ToolControl extends Component <ToolControlProps, ToolControlState>{
                                 <span className="flow-title"
                                   style={{
                                     // fontSize:"10px"
+                                    // fontSize: "20px"
                                   }}
                                 >工作流</span>
                                 <svg className="flow-svg">
@@ -316,10 +411,32 @@ class ToolControl extends Component <ToolControlProps, ToolControlState>{
                       
                       <Switch>
                         <Route path="/index/tool/loadingData" component={LoadingData}></Route>
-                        <Route path="/index/tool/dataClassfication" component={DataClassfication} />
+                        <Route path="/index/tool/dataClassfication" 
+                          render = {(props)=>{
+                            return <DataClassfication
+                              parentFunction={this.handelClick}
+                              {...props} />
+                          }}
+                            />
                         <Route path="/index/tool/handleLabel" component={DataLabelConfig}></Route>
-                        <Route path='/index/tool/dictMatch' component={DictMatchConfig}></Route>
-                        <Route path='/index/tool/textRec' component={TextIdentify}></Route>
+                        <Route path='/index/tool/dictMatch' 
+                          render = {(props) => {
+                              return <DictMatchConfig 
+                              trainTextData = {this.state.TrainTextData}
+                              getTrainTextData = {this.getTrainTextData}
+                              {...props} />
+                          }}
+                          // component={DictMatchConfig}
+                          ></Route>
+                        <Route path='/index/tool/textRec' 
+                            render = {(props) => {
+                              return <TextIdentify 
+                              getTrainTextData = {this.getTrainTextData}
+                              parentFunction = {this.handelClick} 
+                              {...props} />
+                            }}
+                            // component={TextIdentify}
+                            ></Route>
                         <Route path="/index/tool/export" component={ExportData} />
                         <Redirect to='/index/tool/'></Redirect>
                         

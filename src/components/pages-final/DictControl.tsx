@@ -44,8 +44,12 @@ import ProCard from '@ant-design/pro-card';
 import TextArea from 'antd/lib/input/TextArea';
 import { ColumnType } from 'antd/lib/table';
 
+// 允许携带跨域信息
+axios.defaults.withCredentials = true
+
 
 interface DictControlProps extends MainStoreType,DictionaryViewStoreType{
+  history:any,
   // updateAllTextsData: typeof updateAllTextsData,
   updateAllDictionaryData: typeof updateAllDictionaryData,
 //   updateLabelByShow: typeof updateLabelByShow,
@@ -53,14 +57,21 @@ interface DictControlProps extends MainStoreType,DictionaryViewStoreType{
   // updateTextsData: typeof updateTextsData,
 }
 interface DictControlState {
+  labelList:Array<string>
 
 }
 class DictControl extends Component <DictControlProps, DictControlState>{
     public constructor(props : DictControlProps) {
         super(props)
+        this.state = {
+          // form:
+          labelList:[]
+        }
     }
 
     public render() : JSX.Element {
+        const {dictionaryData} = this.props
+        const {labelList} = this.state
         return (
             <ProCard
               // title="左右分栏带标题"
@@ -112,6 +123,63 @@ class DictControl extends Component <DictControlProps, DictControlState>{
                     style={{
                       // fontSize:"20px"
                     }}
+                    onFinish={(value:any)=> {
+                      console.log("dictFinish",value)
+                      const fileByRead = value['dictFile'].fileList
+
+                      // console.log("fileList",fileByRead[0])
+                      
+                      const reader = new FileReader(); 
+                        // reader.readAsText(fileByRead[0].raw)
+                        reader.readAsArrayBuffer(fileByRead[0].originFileObj); //读取文件的内容
+                        reader.onload = () => {
+                          // console.log(reader.result)
+                          const { result } = reader;
+                          // console.log("result",result)
+                          const wb = XLSX.read(result)
+                          /* Get first worksheet */
+                          const wsname = wb.SheetNames[0];
+                          const ws = wb.Sheets[wsname];
+                          /* Convert array of arrays */
+                          const data:Array<Array<string>> = XLSX.utils.sheet_to_json(ws, {header:1});
+                          // console.log(data)
+                          const dataByAdd:TableDataType = []
+                          for(let i = data.length - 1; i > 0; i--) {//;
+                            const d = {
+                              name: data[i][1],
+                              label: data[i][0],
+                              key: Number(Math.random().toString().substr(3, 10) + Date.now()).toString(36),
+                              abbreviations: [...data[i].slice(2)]
+                            }
+                            
+                            dataByAdd.push(d)
+                            
+                            if(labelList.includes(data[i][0])) {
+                              dictionaryData[data[i][0]].push(d)
+                            } else {
+                              labelList.push(data[i][0])
+                              dictionaryData[data[i][0]] = [d]
+                            }
+                          }
+
+                          console.log("dictionaryData",dataByAdd)
+
+                          axios.post(`${PATH}/upload_dictionary`, dataByAdd, {withCredentials: true})
+                            .then((res:AxiosResponse<any>) => {
+                              if(res.data.status){
+                                // this.setState({
+                                //   isUpload:false
+                                // })
+                              }
+                              // console.log(res.data)
+                            })
+                          // history.push('/index/dictionary')
+                          message.success('您已成功上传的字典数据', 1)
+                          updateAllDictionaryData(JSON.parse(JSON.stringify(dictionaryData)))
+                          this.setState({ labelList })
+                        }
+                      
+                    }}
                   >
                     <Form.Item
                       label="字典名称"
@@ -146,6 +214,16 @@ class DictControl extends Component <DictControlProps, DictControlState>{
                     >
                       <Upload 
                       // {...props}
+                      accept='application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                      beforeUpload = {(file)=>{
+                        const isType = 
+                          file.type === 'application/vnd.ms-excel' ||
+                          file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                        if(!isType){
+                          message.error("上传文件只支持xls,xlsx类型")
+                        }
+                        return isType
+                      }}
                       >
                         <Button icon={<UploadOutlined />}>Click to Upload</Button>
                       </Upload>
@@ -330,6 +408,32 @@ class DictControl extends Component <DictControlProps, DictControlState>{
 
     componentDidMount(){
       // const {} = this.props
+      const { labelList } = this.state;
+      const { history, updateAllDictionaryData } = this.props;
+      axios.get(`${PATH}/get_dictionary` )
+        .then((res: AxiosResponse<any>) => {
+          const { data: response } = res;
+          if (response['status'] === 200 && response['message'] === '获取成功') {
+            const dictionaryData:{
+              [label: string]: TableDataType
+            } = {}
+            const { data } = response;
+            // console.log(data)
+            for(let i = data.length - 1; i > 0; i--) {
+              if(labelList.includes(data[i]['label'])) {
+                dictionaryData[data[i]['label']].push(data[i])
+              } else {
+                labelList.push(data[i]['label'])
+                dictionaryData[data[i]['label']] = [data[i]]
+              }
+            }
+            updateAllDictionaryData(dictionaryData)
+          } else {
+            message.error('请您先登录', 1.5, () => {
+              this.props.history.push('/')
+            })
+          }
+        })
     }
 }
 
@@ -339,13 +443,14 @@ const mapStateToProps = (state: StoreType, ownProps?: any) => {
   return {
     ...ownProps,
     ...DictionaryView,
-    Main:Main
+    ...Main
   };
 };
 
 const mapDispatchToProps = {
   updateDictionaryData,
   modifyLabelOfDictionaryData,
+  updateAllDictionaryData
 };
 
 

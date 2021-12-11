@@ -1,10 +1,12 @@
 import { Space, Table } from 'antd';
 import React, {Component} from 'react';
+import { TextsDataType } from '../../../../types/propsTypes';
 import MarkView from '../../../MarkView';
+import ShowText from '../../../OtherView/ShowText';
 
 
 interface RawTextProps {
-
+  inheritedData:TextsDataType
 }
 interface RawTextState {
 
@@ -12,9 +14,13 @@ interface RawTextState {
 class RawText extends Component <RawTextProps, RawTextState>{
     public constructor(props : RawTextProps) {
         super(props)
+        this.setState({
+              
+        })
     }
 
     public render() : JSX.Element {
+        const { inheritedData} = this.props
         return (
              <div style={{ width: '98%', height: '50%', float: 'left', marginTop: '0%', marginLeft: '1%' }}>
                 {/* <MarkView></MarkView> */}
@@ -99,6 +105,9 @@ class RawText extends Component <RawTextProps, RawTextState>{
               <div style={{ width: '50%', height: '100%', float: 'left', border: '1px solid gray' }}>
               <WordsCloud isComplete={true} wordCloudClass={'3'} />
               </div> */}
+              <ShowText 
+                inheritedData={inheritedData}
+              ></ShowText>
             </div> 
         )
     }

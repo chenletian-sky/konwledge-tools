@@ -17,7 +17,9 @@ interface ShowTrainTextProps {
   data:MarkTextsDataType,
   current:number,
 	TrainView:MarkViewStoreType,
-  MenuView:MenuStoreType
+  MenuView:MenuStoreType,
+  trainTextData:any,
+  pageSize?:number,
   // updateTextTablePage: typeof updateTextTablePage,
 	updateMarkTextData: typeof updateMarkTextData,
 	updateTextsData: typeof updateTextsData,
@@ -154,7 +156,9 @@ class ShowTrainText extends Component <ShowTrainTextProps, ShowTrainTextSta
 
     public render() : JSX.Element {
         const { labels, inputVisible, labelSettingConfig, popoverVisibleName, selectedRowKeys, selectedRows } = this.state
-        const { history, current, data, updateTextsData, updateTrainData,updateTrainDataByDelete, updateMarkTextData,updateTrainTextTablePage ,changeMenuSelect} = this.props
+        const { history, current, updateTextsData, updateTrainData,updateTrainDataByDelete, updateMarkTextData,updateTrainTextTablePage ,changeMenuSelect} = this.props
+        const { trainTextData:data } = this.props
+        let pageSize = this.props.pageSize ? this.props.pageSize : 10
         // if ()
         // console.log(data[0]);
         return (
@@ -195,7 +199,7 @@ class ShowTrainText extends Component <ShowTrainTextProps, ShowTrainTextSta
             <Table columns={this.columns} dataSource={data} size='small' 
               // scroll={{ y: 450 }}
               pagination={{
-                pageSize: 10,
+                pageSize,
                 current,
                 simple: true,
                 position: ['bottomRight'],
@@ -227,7 +231,7 @@ const mapStateToProps = (state:StoreType, ownProps?: any) => {
 	// console.log(Header)
 	return {
 			...ownProps,
-			// ...TrainView,
+			...TrainView,
       // ...MenuView
 	}
 }

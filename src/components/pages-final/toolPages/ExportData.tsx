@@ -121,7 +121,7 @@ class ExportData extends Component <ExportDataProps, ExportDataState>{
                       // height:"10%"
                     }}
                   >
-                    <TrainView></TrainView>
+                    {/* <TrainView></TrainView> */}
 
                   </div>
 

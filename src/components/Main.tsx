@@ -124,7 +124,8 @@ class Main extends Component<MainProps, MainState>{
     console.log("MainMenuSelectKeys",MenuSelectKey,dictionaryData)
     // console.log(dictionaryData)
     return (
-      <Layout style={{
+      <Layout 
+      style={{
         height: '100%'
       }}>
         <Sider trigger={null} theme="light">
@@ -134,7 +135,7 @@ class Main extends Component<MainProps, MainState>{
             // marginLeft: '2%',
             lineHeight: '60px',
             textAlign: 'center',
-            fontSize: '24px',
+            fontSize: '20px',
             fontWeight: 'bold',
             color: 'rgb(13,110,253)',
             userSelect: 'none'
@@ -492,11 +493,13 @@ class Main extends Component<MainProps, MainState>{
                     style={{ display: 'none' }} onChange={
                       (event: React.ChangeEvent<HTMLInputElement>) => {
                         const fileByRead:FileList = event.currentTarget.files as FileList
+                        console.log("fileByRead",fileByRead[0])
                         const reader = new FileReader(); 
                         reader.readAsArrayBuffer(fileByRead[0]); //读取文件的内容
                         reader.onload = () => {
                           // console.log(reader.result)
                           const { result } = reader;
+                          console.log("result",result)
                           const wb = XLSX.read(result)
                           /* Get first worksheet */
                           const wsname = wb.SheetNames[0];
@@ -522,15 +525,15 @@ class Main extends Component<MainProps, MainState>{
                               dictionaryData[data[i][0]] = [d]
                             }
                           }
-                          axios.post(`${PATH}/upload_dictionary`, dataByAdd, {withCredentials: true})
-                            .then((res:AxiosResponse<any>) => {
-                              if(res.data.status){
-                                // this.setState({
-                                //   isUpload:false
-                                // })
-                              }
-                              // console.log(res.data)
-                            })
+                          // axios.post(`${PATH}/upload_dictionary`, dataByAdd, {withCredentials: true})
+                          //   .then((res:AxiosResponse<any>) => {
+                          //     if(res.data.status){
+                          //       // this.setState({
+                          //       //   isUpload:false
+                          //       // })
+                          //     }
+                          //     // console.log(res.data)
+                          //   })
                           history.push('/index/dictionary')
                           message.success('您已成功上传的字典数据', 1)
                           updateAllDictionaryData(JSON.parse(JSON.stringify(dictionaryData)))

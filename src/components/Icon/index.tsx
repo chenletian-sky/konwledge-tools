@@ -1,3 +1,5 @@
+import { svg } from "d3-fetch"
+
 /**
  * 	
  * @returns 增加图标
@@ -584,4 +586,10 @@ sAAAAB90RVh0ZXhpZjp0aHVtYm5haWw6UmVzb2x1dGlvblVuaXQAMiVAXtMAAAAfdEVYdGV4aWY6
 dGh1bWJuYWlsOlhSZXNvbHV0aW9uADcyLzHahxgsAAAAH3RFWHRleGlmOnRodW1ibmFpbDpZUmVz
 b2x1dGlvbgA3Mi8xdO+JvQAAAABJRU5ErkJggg==" />
 </svg>
+)
+
+export const testIcon = () => (
+	<svg>
+		<rect></rect>
+	</svg>
 )

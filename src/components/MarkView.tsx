@@ -24,7 +24,7 @@ interface MarkViewProps extends MarkViewStoreType {
 	updateTextsData: typeof updateTextsData,
 	updateTrainData: typeof updateTrainData,
 	changeMenuSelect:typeof changeMenuSelect,
-	PageSizeNeedChange?:number
+	PageSizeNeedChange?:number,
 }
 
 interface MarkViewState {
@@ -377,6 +377,7 @@ class MarkView extends Component<MarkViewProps, MarkViewState>{
 								ref={
 									(input) => {
 										this.input = input
+										
 									}
 								}
 								type="text"
@@ -536,6 +537,7 @@ class MarkView extends Component<MarkViewProps, MarkViewState>{
 				
 				<Button type='primary' style={{
 					// float: 'left'
+					display:"none",
 					transform: 'translate(20px, -40px)'
 				}} onClick={
 					() => { 
@@ -596,7 +598,8 @@ const mapDispatchToProps = {
 	updateMarkTextData,
 	updateTextsData,
 	updateTrainData,
-	changeMenuSelect
+	changeMenuSelect,
+
 }
 
 

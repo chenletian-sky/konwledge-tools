@@ -44,8 +44,8 @@ import ProCard from '@ant-design/pro-card';
 import TextArea from 'antd/lib/input/TextArea';
 
 
-interface TextControlProps {
-
+interface TextControlProps extends MainStoreType{
+  updateTextsData:typeof updateTextsData
 }
 interface TextControlState {
 
@@ -56,6 +56,7 @@ class TextControl extends Component <TextControlProps, TextControlState>{
     }
 
     public render() : JSX.Element {
+        const {updateTextsData} = this.props
         return (
               <ProCard
                   // title="左右分栏带标题"
@@ -105,10 +106,66 @@ class TextControl extends Component <TextControlProps, TextControlState>{
                         // onFinish={onFinish}
                         // onFinishFailed={onFinishFailed}
                         autoComplete="off"
+                        onFinish = {(value)=> {
+                          const { fileList:fileByRead} = value['textFile']
+                          const name:string = fileByRead[0].name
+                          const reader = new FileReader(); 
+                          reader.readAsText(fileByRead[0].originFileObj); //读取文件的内容
+                          reader.onload = () => {
+                            // console.log(this.result)
+                            const { result } = reader;
+                            const data:Array<string> = (result as string).split('\r\n').filter((value: string) => value !== '')
+                            // console.log(data)
+                            const textsData:TextsDataType = data.map((value: string) => ({
+                              key: Number(Math.random().toString().substr(3, 10) + Date.now()).toString(36),
+                              text: value,
+                              label: [],
+                              // textArr: []
+                              textArr: value.split('').map((font:string, index:number) => ({
+                                start: index,
+                                end: index,
+                                text: font,
+                                label: 'none',
+                                color: 'blue'
+                              }))
+                            }))
+                            console.log("textData",textsData)
+                            updateTextsData(textsData)
+                            // console.log("textData",textsData)
+                            // axios.post(`/upload_texts`, textsData, {withCredentials: true})
+                            
+                            // this.setState({
+                            //   isUpload:true
+                            // })
+
+                            console.log("textsData",textsData)
+
+                            axios.post(`${PATH}/upload_texts`, textsData, {withCredentials: true})
+                                .then((res:AxiosResponse<any>) => {
+                                  if(res.data.status === 200){
+                                    this.setState({
+                                      // isLoading:true
+                                    })
+
+                                    
+                                    
+                                  }
+                                  // console.log(res)
+                                }).finally(()=>{
+                                  console.log('finally')
+                                  
+                                })
+                            
+
+                            // history.push('/index/texts')
+                            changeMenuSelect(['texts'])
+                            message.success('您已成功上传的语料数据', 1)
+                          }
+                        }}
                       >
                         <Form.Item
                           label="语料名称"
-                          name="dictName"
+                          name="textName"
                           rules={[{ required: true }]}
                         >
                           <Input />
@@ -116,7 +173,7 @@ class TextControl extends Component <TextControlProps, TextControlState>{
 
                         <Form.Item
                           label="语料描述"
-                          name="dictDescribe"
+                          name="textDescribe"
                           rules={[{ required: true }]}
                           wrapperCol={{span:20}}
                         >
@@ -132,11 +189,13 @@ class TextControl extends Component <TextControlProps, TextControlState>{
 
                         <Form.Item
                           label="导入文件"
-                          name="dictFile"
+                          name="textFile"
                           rules={[{ required: true  }]}
                         >
                           <Upload 
                           // {...props}
+                            accept = 'text/plain'
+
                           >
                             <Button icon={<UploadOutlined />}>Click to Upload</Button>
                           </Upload>
@@ -306,4 +365,20 @@ class TextControl extends Component <TextControlProps, TextControlState>{
         )
     }
 }
-export default TextControl;
+
+const mapStateToProps = (state: StoreType, ownProps?: any) => {
+  const { Main,MenuView ,TextView,MarkView,TrainView} = state
+  // console.log()
+  return {
+    ...ownProps,
+    ...Main,
+    // ...MenuView,
+    TextViewData:TextView,
+    MarkViewData:MarkView,
+    TrainViewData:TrainView
+  }
+}
+const mapDispatchToProps = {
+  updateTextsData
+}
+export default connect(mapStateToProps,mapDispatchToProps)( TextControl);

@@ -21,7 +21,9 @@ interface ShowMarkTextProps extends MarkViewStoreType{
 	updateMarkTextData: typeof updateMarkTextData,
 	updateTextsData: typeof updateTextsData,
 	updateTrainData: typeof updateTrainData,
-	changeMenuSelect:typeof changeMenuSelect
+	changeMenuSelect:typeof changeMenuSelect,
+  inheritedData:MarkTextsDataType,
+  showHeader?:boolean
 }
 interface ShowMarkTextState {
   editKey: string,
@@ -39,6 +41,7 @@ interface ShowMarkTextState {
 	popoverVisibleName: string,
 	selectedRowKeys: Array<Key>,
 	selectedRows: MarkTextsDataType,
+  pageSize:number
 }
 class ShowMarkText extends Component <ShowMarkTextProps, ShowMarkTextState>{
     private startIndex: number | undefined
@@ -79,6 +82,7 @@ class ShowMarkText extends Component <ShowMarkTextProps, ShowMarkTextState>
               key: 'e'
             }
           ],
+          pageSize:4
         }
         this.columns = [
           {
@@ -176,7 +180,8 @@ class ShowMarkText extends Component <ShowMarkTextProps, ShowMarkTextState>
 
     public render() : JSX.Element {
         const { labels, inputVisible, labelSettingConfig, popoverVisibleName, selectedRowKeys, selectedRows } = this.state
-        const { history, current, data, updateTextTablePage, updateTextsData, updateTrainData, updateMarkTextData,changeMenuSelect } = this.props
+        const { history, current, inheritedData:data, updateTextTablePage, updateTextsData, updateTrainData, updateMarkTextData,changeMenuSelect } = this.props
+        const {pageSize} = this.state
         const {TrainViewData} = this.props
                 return (
           <div style={{
@@ -317,9 +322,10 @@ class ShowMarkText extends Component <ShowMarkTextProps, ShowMarkTextState>
             </div>
             
             <Table columns={this.columns} dataSource={data} size='small' 
-              scroll={{ y: 360 }}
+              // scroll={{ y: 360 }}
+              showHeader={this.props.showHeader}
               pagination={{
-                pageSize: 6,
+                pageSize,
                 current,
                 simple: true,
                 position: ['bottomRight'],
